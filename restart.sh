@@ -1,21 +1,20 @@
 #!/bin/bash
 #
-echo "restarting..."
+#作者：王海迪
+#日期：2021年8月8日
+#脚本描述：Tomcat程序实现脚本自动重启
+
+#定义Tomcat的安装目录，需要根据自己的部署位置调整
+echo "Tomcat is shuting..."
+TOMCATPATH=/opt/webserver/Tomcat-8.5.63
+
 #关闭对应的tomcat
-/opt/webserver/Tomcat-8.5.63/bin/shutdown.sh &>/dev/null
-#等待5s
-sleep 5
-#判断tomcat是否正常关闭，未正常关闭的话直接kill掉
-ps -ef | grep Tomcat |grep -v grep | awk '{print $2}' | xargs kill -9 &>/dev/null
-echo "restart successfully,starting..." 
+ps -ef | grep tomcat | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
+sleep 1
+
 #启动tomcat
-/opt/webserver/Tomcat-8.5.63/bin/startup.sh &>/dev/null
-#sleep 30
-#判断tomcat是否正常启动
-tail -f /opt/webserver/Tomcat-8.5.63/logs/catalina.out | grep error
-tail -f /opt/webserver/Tomcat-8.5.63/logs/catalina.out | grep org.apache.catalina.startup.Catalina.start
-#echo "Congrarulations! Start successfully!"
-#echo "exiting..."
-#sleep 2
-#exit
+echo "Tomcat is shut successfully,tomcat starting..." 
+$TOMCATPATH/bin/startup.sh
+#判断tomcat是否正常启动,并查看对应日志
+tail -f /opt/webserver/Tomcat-8.5.63/logs/catalina.out
 
