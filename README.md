@@ -16,6 +16,8 @@ restart.sh里面添加set -m命令，用于分线程进行脚本执行，避免�
 
 修改tomcat-restart为tomcat-install
 
+调整了一下版本发布方式
+
 # v1.1
 
 加上选项功能，可以进行多个tomcat的管理
