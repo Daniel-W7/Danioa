@@ -5,8 +5,11 @@ tomcat自动重启配置脚本，之后会试着加上一些系统配置相关�
 # v1.3
 
 update.sh里面添加目录切换命令，直接切换到此程序根目录，可直接调用根目录shell脚本
+
 update.sh输出内容调整，以适应Windows1界面的显示
-update.bat添加清理本地upload文件夹下内容的功能，避免重复更新，并添加登录linux系统之后直接执行update.sh的功能，可实现自动更新
+
+update.bat添加清理本地upload文件夹下内容的功能，避免重复更新，并添加登录linux系统之后直接执行update.
+sh的功能，可实现自动更新
 
 # v1.2
 
