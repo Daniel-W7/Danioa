@@ -4,6 +4,12 @@
 #Date&Time：2021年8月9日
 #Discription：实现通过脚本自动部署系统
 
+#切换到当前应用程序的目录
+#获取运行的程序名
+PRONAME=`basename $0`
+#获取文件运行的当前目录
+CURPATH=$(cd "$(dirname "$0")"; pwd)
+cd $CURPATH
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 echo "Hello,please choose your tomcat to update:"
 read -p "Your choice(ht|gfzq|waibao|tuoguan|zx|hx|zs|zyjj|xcgf|dsq|Tomcat):" TOMCATVERSION
