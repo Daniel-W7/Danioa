@@ -2,6 +2,15 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+# v1.4
+
+将update.sh,backup.sh,restart.sh合并为tctconf.sh,
+并且可以通过tctconf.sh -u,-b,-r TOMCATVERSION命令，进行对应版本的系统的更新，备份，重启操作
+也可以直接通过tctconf.sh命令进行交互操作
+仍然可以通过update.bat进行更新文件从Windows传输到Linux主机，需配置免密码登录
+修复更新会误删除Windows端upload文件夹的错误
+优化部分bug，
+
 # v1.3
 
 update.sh里面添加目录切换命令，直接切换到此程序根目录，可直接调用根目录shell脚本
