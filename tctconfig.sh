@@ -3,9 +3,17 @@
 #Auther：Daniel
 #Date&Time：2021年8月17日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
+<<<<<<< Updated upstream
 #Version：1.5
+=======
+>>>>>>> Stashed changes
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
+#配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
 set -m
+#获取运行的程序名
+PRONAME=`basename $0`
+#获取文件运行的当前目录
+TCTPATH=$(cd "$(dirname "$0")"; pwd)
 case $1 in
 	-b|--backup)
 		CONFIGURATION=b
@@ -55,7 +63,7 @@ case $TOMCATVERSION in
                         ROOTPATH=hxhof;;
 
         zs)     
-			TOMCATPATH=/opt/webserver/tomcat8-zs
+			TOMCATPATH=/opt/webserver/tomcat8-zsfusion
                         ROOTPATH=zs;;
 
         zyjj)  
@@ -76,7 +84,7 @@ case $TOMCATVERSION in
 
 	q)		echo "quitting"
 			exit 0;;
-	*)              echo "error !Please input a right choice"
+	*)              echo "error !Please input a right choice(ht|gfzq|waibao|tuoguan|zx|hx|zs|zyjj|xcgf|dsq|Tomcat)"
 			exit 1;;
 
 esac
@@ -100,15 +108,20 @@ restart() {
         sleep 1
         $TOMCATPATH/bin/startup.sh &>/dev/null
         tail -f $TOMCATPATH/logs/catalina.out
+	ps -ef | grep tctconfig.sh | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
 }
 update() {
 backup
+	#切换到当前应用程序的目录
+	cd $TCTPATH
         #进行文件更新
         echo "Start to update system..."
         sleep 2
         \cp -a ./package/upload/* $TOMCATPATH/webapps/$ROOTPATH
         #删除本次更新文件
-        rm -rf ./package/upload/*
+	mkdir ./package/old/`date +%Y-%m-%d-%H:%M:%S`/
+        mv ./package/upload/* ./package/old/`date +%Y-%m-%d-%H:%M:%S`/
+	echo "Update successfully!"
         #重启tomcat
         echo "Start to restart system..."
 restart
@@ -117,7 +130,9 @@ restart
 case $CONFIGURATION in
 	
 	b|backup)
-		backup;;
+		backup
+		echo "backup successfully,exiting..."
+		sleep 1;;
 	r|restart)
 		restart;;
 	u|update)
@@ -125,9 +140,8 @@ case $CONFIGURATION in
 	q)	
 		echo "quitting"
 		exit 0;;
-
 	*)
-		echo "error! Please input a right configuration";;
+		echo "error! Please input a right configuration(b|backup|r|restart|u|update|q for quit)";;
 
 esac
 
