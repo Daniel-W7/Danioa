@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Auther：Daniel
-#Date&Time：2021年8月16日
+#Date&Time：2021年8月17日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
-#Version：1.4
+#Version：1.5
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 set -m
 case $1 in
