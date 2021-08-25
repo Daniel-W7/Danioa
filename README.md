@@ -1,6 +1,28 @@
-# tomcat-install
+# tctconfig
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
+
+# v1.6
+
+修改项目名称和脚本名称为tctconfig
+
+添加配置信息文件tct.conf，放置于conf文件夹中，用于保存tomcat信息
+
+添加logs文件夹，用于放置相关日志
+
+添加clean.sh来清理遗留进程
+
+package目录下添加install目录，用来放置部署文件，tomcat8.zip，redis.zip和jdk1.8.0_131.zip
+
+修改upload目录为update，修改备份文件目录为backup
+
+添加-i选项用于tomcat初始化部署
+
+添加-tb选项用于测试前全包备份
+
+添加-tu选项用于调试的时候仅更新调试文件不做多余的备份
+
+添加-l选项用于查看catalina.out日志
 
 # v1.5
 
