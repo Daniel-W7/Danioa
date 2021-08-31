@@ -10,62 +10,77 @@ set -m
 PRONAME=`basename $0`
 #获取文件运行的当前目录
 TCTPATH=$(cd "$(dirname "$0")"; pwd)
+MODE=COMMON
 #配置选项，如果没有输入选项直接进入提示页面
 case $1 in
 	-b|--backup)
 		CONFIGURATION=b
-		TOMCATVERSION=$2
-		TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-		ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
+		MODE=PRO;;
+		#TOMCATVERSION=$2
+		#TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+		#ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
 	-tb|--testbackup)
 		CONFIGURATION=tb
-		TOMCATVERSION=$2
-                TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-                ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
+		MODE=PRO;;
+		#TOMCATVERSION=$2
+                #TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+                #ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
 	-r|--restart)
 		CONFIGURATION=r
-        	TOMCATVERSION=$2
-		TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-		ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
+		MODE=PRO;;
+        	#TOMCATVERSION=$2
+		#TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+		#ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
 	-u|--update)
 		CONFIGURATION=u
-		TOMCATVERSION=$2
-		TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-		ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
+		MODE=PRO;;
+		#TOMCATVERSION=$2
+		#TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+		#ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
 	-tu|--testupdate)
                 CONFIGURATION=tu
-                TOMCATVERSION=$2
-                TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-                ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
+		MODE=PRO;;
+                #TOMCATVERSION=$2
+                #TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+                #ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
+	-sh|--shutdown)
+		CONFIGURATION=sh
+		MODE=PRO;;
+	-st|--startup)
+		CONFIGURATION=st
+		MODE=PRO;;
 	-l|--log)
 		CONFIGURATION=l
-                TOMCATVERSION=$2
-                TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-                ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
+		MODE=PRO;;
+                #TOMCATVERSION=$2
+                #TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+                #ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;;
 	-i|--install)
 		CONFIGURATION=i
+		#MODE=PRO
 		INSTALLPATH=/opt
 		INSTALLOPTION=full
 		echo "Hello,please choose your path to install:"
                 read -p "The PATH to install:(ex:/opt):" INSTALLPATH
 		read -p "The option to install:(full|redis|tomcat|jdk):" INSTALLOPTION;;
 	-h|--help):
-		echo "Usage:tctconf.sh | tctconf.sh -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-l|--log|-i|--install|-h|--help TOMCATVERSION"
+		echo "Usage:tctconf.sh | tctconf.sh -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-h|--help TOMCATVERSION"
 		exit 0;;
 	*)
-		echo "Hello,please choose your tomcat to configure(ht|gfzq|waibao|tuoguan|zx|hx|zs|zyjj|xcgf|dsq|qhyxh|Tomcat|q for quit):"
-		#echo "Your choice(ht|gfzq|waibao|tuoguan|zx|hx|zs|zyjj|xcgf|dsq|Tomcat):"
+		#MODE=COMMON
+ 		echo "Hello,please choose your tomcat to configure(ht|gfzq|waibao|tuoguan|zx|hx|xcgf|dsq|zs|zyjj|df|xcgf|dsq|qhyxh|Tomcat|q for quit):"
+		echo "Your choice(ht|gfzq|waibao|tuoguan|zx|hx|zs|zyjj|xcgf|dsq|Tomcat):"
 		read -p "Your choice:" TOMCATVERSION
 		echo "Please chose your configuration:(b|backup|r|restart|u|update|q for quit):"
 		read -p "Your configuration:" CONFIGURATION
 		#read -p "Your choice(ht|gfzq|waibao|tuoguan|zx|hx|zs|zyjj|xcgf|dsq|Tomcat):" TOMCATVERSION
-		TOMCATPATH=`cat $TCTPATH/conf/tct.ini | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-		ROOTPATH=`cat $TCTPATH/conf/tct.ini | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`
-		echo "Usage:tctconfig.sh | tctconfig.sh -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-l|--log|-i|--install|-h|--help TOMCATVERSION";;
+		TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+		ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`
+		echo "Usage:tctconfig.sh | tctconfig.sh -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-h|--help TOMCATVERSION";;
 esac
-#读取tct.ini文件获取对应tomcat路径和系统名称的信息
-#TOMCATPATH=`cat $TCTPATH/conf/tct.ini | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-#ROOTPATH=`cat $TCTPATH/conf/tct.ini | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`
+#读取tct.conf文件获取对应tomcat路径和系统名称的信息
+#TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
+#ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`
 #单个tomcat的情况，此处直接填写即可
 #TOMCATVERSION=
 #TOMCATPATH=
@@ -107,8 +122,8 @@ tctstart(){
         #ps -ef | grep tctconfig.sh | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
 }
 tctrestart(){
-tctshut
-tctstart
+	tctshut
+	tctstart
 }
 #进行日常更新
 update() {
@@ -129,7 +144,7 @@ tctrestart
 }
 #清理参与进程
 clean(){
-ps -ef | grep tctconfig.sh | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh - &>/dev.null
+	ps -ef | grep tctconfig.sh | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh - &>/dev.null
 }
 #安装部署解压
 #unzip(){
@@ -152,24 +167,29 @@ ps -ef | grep tctconfig.sh | grep -v grep | awk '{print $2}' | sed -e "s/^/kill 
 install(){
 #mkdir $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H`/
 case $INSTALLOPTION in
+
 	tomcat)
+		cd $TCTPATH/package/install/
 		echo "Start to install tomcat,please waiting"
 		#\cp -a ./package/install/tomcat8.zip $INSTALLPATH
         	#mv $TCTPATH/package/install/* $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H`/
-        	unzip -d $INSTALLPATH $TCTPATH/package/install/tomcat8.zip >>$TCTPATH/logs/install-`date +%Y-%m-%d`.log
+        	unzip -d $INSTALLPATH `ls $TCTPATH/package/install/ | grep -i tomcat` >>$TCTPATH/logs/install-`date +%Y-%m-%d`.log
 		echo "Tomcat installed successfully!!!";;
 	redis)
+		cd $TCTPATH/package/install/
 		echo "Start to install redis,please waiting"
 	 	#\cp -a ./package/install/redis.zip $INSTALLPATH
-        	unzip -d $INSTALLPATH $TCTPATH/package/install/redis.zip >>$TCTPATH/logs/install-`date +%Y-%m-%d`.log
+        	unzip -d $INSTALLPATH `ls $TCTPATH/package/install/ | grep -i redis` >>$TCTPATH/logs/install-`date +%Y-%m-%d`.log
         	#$INSTALLPATH/redis/bin/redis-server  $INSTALLPATH/redis/conf/6379.conf
 		echo "Redis installed successfully!!!";;
 	jdkinstall)
+		cd $TCTPATH/package/install/
 		echo "Start to install jdk,please waiting"
 		#\cp -a ./package/install/jdk1.8.0_131.zip $INSTALLPATH
-        	unzip -d $INSTALLPATH $TCTPATH/package/install/jdk1.8.0_131.zip >>$TCTPATH/logs/install-`date +%Y-%m-%d`.log
+        	unzip -d $INSTALLPATH `ls $TCTPATH/package/install/ | grep -i jdk` >>$TCTPATH/logs/install-`date +%Y-%m-%d`.log
                	echo "JDK installed successfully!!!";;
 	full)
+		cd $TCTPATH/package/install/
 		echo "Start to fullinstall,please waiting"
         	#\cp -a ./package/install/* $INSTALLPATH
         	#unzip `ls $INSTALLPATH/*`
@@ -183,30 +203,42 @@ case $INSTALLOPTION in
         	echo "System installed successfully!!!";;
 esac
 }
-case $CONFIGURATION in
+
+CONFIGURE(){
+
+	case $CONFIGURATION in
 	
-	b|backup)
-		backup
-		echo "exiting..."
-		sleep 1;;
-	tb|testbackup)
-		testbackup
-                echo "exiting..."
-                sleep 1;;
-	r|restart)
-		tctrestart;;
-	u|update)
-		backup
-		update;;
-	tu|testupdate)
-		update;;
-	l|log)
-		tail -1000f $TOMCATPATH/logs/catalina.out;;
-	i|install)
-		install;;
-	q)	
-		echo "quitting"
-		exit 0;;
-	*)
-		echo "error! Please input a right configuration(b|backup|r|restart|u|update|q for quit)";;
-esac
+		b)
+			backup
+                	echo "exiting..."
+                	sleep 1;;
+        	tb)
+                	testbackup
+                	echo "exiting..."
+                	sleep 1;;
+        	r)
+                	tctrestart;;
+        	u)
+                	backup
+                	update;;
+        	tu)
+                	update;;
+        	sh)
+			tctshut;;
+		st)
+			tctstart;;
+		l)
+                	tail -1000f $TOMCATPATH/logs/catalina.out;;
+		i)
+			install;;
+	esac
+}
+
+if [ $MODE = PRO ];then
+	TOMCATVERSION=$2;
+    	TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`;
+	ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;
+	CONFIGURE;
+else
+	CONFIGURE;		
+fi
