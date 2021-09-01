@@ -1,0 +1,10 @@
+Using CATALINA_BASE:   /opt/webserver/Tomcat-8.5.63
+Using CATALINA_HOME:   /opt/webserver/Tomcat-8.5.63
+Using CATALINA_TMPDIR: /opt/webserver/Tomcat-8.5.63/temp
+Using JRE_HOME:        /opt/webserver/jdk1.8.0_131
+Using CLASSPATH:       /opt/webserver/Tomcat-8.5.63/bin/bootstrap.jar:/opt/webserver/Tomcat-8.5.63/bin/tomcat-juli.jar
+Using CATALINA_OPTS:   
+/opt/webserver/Tomcat-8.5.63/webapps/ROOT is shutted successfully
+Starting /opt/webserver/Tomcat-8.5.63/webapps/ROOT ...
+/opt/webserver/Tomcat-8.5.63/webapps/ROOT start successfully
+/opt/webserver/Tomcat-8.5.63/webapps/ROOT backup successfully.The back file is /opt/webserver/Tomcat-8.5.63/webapps/ROOT2021-09-01-15:53:10.zip
