@@ -1,111 +1,75 @@
 # tctconfig
 
-tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
+实现通过脚本自动部署备份，重启，更新tomcat系统
 
-# v1.9
+详细文档及配置内容，请查看https://www.danielw7.com/tctconfig/
 
-更新的时候添加判断语句，若是./package/update文件夹下面无更新文件，则直接退出更新
+使用
+	./tctconfig.sh [OPTION TOMCATNAME]
 
-执行-i安装选项时，若目标目录有相同的安装文件，则可选择是否部署安装
+Option:
 
-删除clean.sh脚本，tctconfig.sh添加-c选项，可选择清理日志文件和backup文件，顺带清理脚本进程
+	-b|--backup
+        
+		备份对应的tomcat根路径的所有文件，生成ROOTPATHYYYY-MM-DD-HH:MM:SS.zip格式的备份文件，直接放置于根路径所在的父目录中
 
-# v1.8
+	-tb|--testbackup
+    
+		测试前的备份，备份对应的tomcat根路径的所有文件，生成ROOTPATHYYYY-MM-DD-HH:MM:SSTB.zip格式的备份文件，直接放置于根路径所在的父目录中
+    
+	-r|--restart
+    
+		重启对应的tomcat，并查看catliana.out日志
 
-更新日志文件输出方式，日志名称修改
+	-u|--update
 
-修改系统显示名称，改为具体的系统tomcat地址，方便定位问题
+		更新对应的tomcat，有4个步骤；
+		 1、备份对应的tomcat，类似-b命令
+		 2、更新文件，将./tctconfig/packages/update文件夹下面的所有更新文件拷贝到$TOMCATPATH/webapps/$ROOTPATH中，并覆盖重复的文件
+		 3、清理更新文件，将./tctconfig/packages/update文件夹下面的所有更新文件移动到./tctconfig/packages/backup/$TOMCATVERSION/YYYY-MM-DD-HH:MM:SS文件夹中
+		 4、重启对应tomcat，类似-r命令
 
-输出字符添加颜色，方便确认比照
+	-tu|--testupdate
+    
+		更新测试文件，不进行备份操作，只更新文件，重启tomcat，相当于-u的2，3，4功能
+		建议进行测试更新之前执行以下./tctconfig.sh -tb TOMCATVERSION，进行一下备份，避免出现不必要的损失
 
-修复部分bug
+	-sh|--shutdown
 
-# v1.7
+		关闭对应的tomcat
+    
+	-st|--startup
+    
+		开启对应的tomcat
 
-完善.bat脚本，和新版本tctconfig对应
+	-l|--log
+    
+		查看对应的tomcat的catalina.out的日志
 
-添加-sh和-st命令，用于单独启动或者关闭tomcat
+ 	-i|--install
 
-更新conf文件
+		安装部署tomcat，jdk，redis，可以选择需要的组件进行安装，安装文件位置为./package/install
+    
+	-c|--clean
+    
+		清理日志，更新备份文件和残留进程，可用y/n选择清理对应的文件
 
-调整程序逻辑，精简程序
+	-h|--help 
+    
+		查看帮助
 
-修复部分bug
+tct.conf:
+	
+	tctconfig.sh的配置文件,用于配置tctconfig.sh的运行模式以及应用信息。
+	
+	TOMCATVERSION:
+        	为tomcat的版本名称，版本信息位于./tctconfig/conf/tct.conf中，以分号隔开
+        例：
+        	Tomcat:/opt/webserver/Tomcat-8.5.63:ROOT
+        	tomcat版本:tomcat部署路径:根路径
 
-# v1.6
-
-修改项目名称和脚本名称为tctconfig
-
-添加配置信息文件tct.conf，放置于conf文件夹中，用于保存tomcat信息
-
-添加logs文件夹，用于放置相关日志
-
-添加clean.sh来清理遗留进程
-
-package目录下添加install目录，用来放置部署文件，tomcat8.zip，redis.zip和jdk1.8.0_131.zip
-
-修改upload目录为update，修改备份文件目录为backup
-
-添加-i选项用于tomcat初始化部署
-
-添加-tb选项用于测试前全包备份
-
-添加-tu选项用于调试的时候仅更新调试文件不做多余的备份
-
-添加-l选项用于查看catalina.out日志
-
-# v1.5
-
-将目录获取指令提到最前面，解决了进行更新时找不到目录的问题
-
-将Linux端更新后的删除更新内容命令修改为了移动命令，在package下面添加了一个old文件夹用于放置更新文件
-
-修复部分bug
-
-
-# v1.4
-
-将update.sh,backup.sh,restart.sh合并为tctconf.sh,
-
-并且可以通过tctconf.sh -u,-b,-r TOMCATVERSION命令，进行对应版本的系统的更新，备份，重启操作
-
-也可以直接通过tctconf.sh命令进行交互操作
-
-仍然可以通过update.bat进行更新文件从Windows传输到Linux主机，需配置免密码登录
-
-修复更新会误删除Windows端upload文件夹的错误
-
-优化部分bug，
-
-# v1.3
-
-update.sh里面添加目录切换命令，直接切换到此程序根目录，可直接调用根目录shell脚本
-
-update.sh输出内容调整，以适应Windows1界面的显示
-
-update.bat添加清理本地upload文件夹下内容的功能，避免重复更新，并添加登录linux系统之后直接执行update.
-sh的功能，可实现自动更新
-
-# v1.2
-
-添加backup.sh,用于备份之前的系统文件，可重复备份
-
-添加update.sh,用于更新，更新之前进行对应安装目录的备份
-
-添加update.bat,用于Windows向linux自动上传更新补丁，补丁位置./package/upload/
-
-添加clean.sh,用于清理可能遗留的shell进程
-
-restart.sh里面添加set -m命令，用于分线程进行脚本执行，避免出现shell脚本关闭，tomcat也被一并关闭的情况
-
-修改tomcat-restart为tomcat-install
-
-调整了一下版本发布方式
-
-# v1.1
-
-加上选项功能，可以进行多个tomcat的管理
-
-# v1.0
-
-重启脚本基础版，仅添加重启单个tomcat功能
+	PROGRAM_MODE:
+		程序的运行模式，分为单系统模式（single）和多系统模式（multi），
+	SINGLE_PATH:
+		后面跟的是单用户模式的应用信息。
+		模式为TOMCATVERSION:TOMCATPATH:ROOTPATH
