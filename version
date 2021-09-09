@@ -4,13 +4,15 @@ tomcat自动重启配置脚本，之后会试着加上一些系统配置相关�
 
 # v2.0
 
-添加tct.conf里面添加PROGRAM_MODE键值，以single和multi来选择运行于多系统模式还是单系统模式
+tct.conf里面添加PROGRAM_MODE键值，以single和multi来选择运行于多系统模式还是单系统模式
 
 添加SINGLE_PATH键值，后面跟上单系统模式的配置信息
 
 修复因为tct.conf里面的名称重复，程序无法正常开启的问题，名称重复的话进行提示
 	
 程序添加判断功能，当没有输入TOMCATVERSION时，进行提示
+
+添加version文件，用于放置更新信息
 
 # v1.9
 
