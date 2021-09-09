@@ -4,8 +4,8 @@
 
 详细文档及配置内容，请查看https://www.danielw7.com/tctconfig/
 
-使用
-	./tctconfig.sh [OPTION TOMCATNAME]
+命令格式
+	./tctconfig.sh [OPTION] [TOMCATNAME]
 
 Option:
 
