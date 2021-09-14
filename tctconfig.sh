@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.0
+#Version:2.1
 #Auther：Daniel
-#Date&Time：2021年9月1日
+#Date&Time：2021年9月14日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -31,6 +31,9 @@ case $1 in
 	-tu|--testupdate)
                 CONFIGURATION=tu
 		CONFIG_MODE=PRO;;
+	-tg|--tgupdate)
+		CONFIGURATION=tg
+		CONFIG_MODE=COMMON;;
 	-sh|--shutdown)
 		CONFIGURATION=sh
 		CONFIG_MODE=PRO;;
@@ -63,27 +66,21 @@ case $1 in
 			echo "Your choice(ht|gfzq|waibao|tuoguan|zx|hx|xcgf|dsq|zs|zyjj|df|qhyxh|vm):"
 			read -p "Your choice:" TOMCATVERSION
 		fi
-		echo "Please chose your configuration:(b|backup|r|restart|u|update|l|log|c|clean):"
+		echo "Please chose your configuration:(b|backup|r|restart|u|update|l|log|c|clean|q for quit):"
 		read -p "Your configuration:" CONFIGURATION
-		#read -p "Your choice(ht|gfzq|waibao|tuoguan|zx|hx|zs|zyjj|xcgf|dsq|Tomcat):" TOMCATVERSION
-		#TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-		#ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`
-		#echo "Usage:tctconfig.sh | tctconfig.sh -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-c|--clean|-h|--help TOMCATVERSION";;
+		if [ $CONFIGURATION = q ];then
+			echo "exiting...";
+			exit 0;
+		fi
 esac
-#读取tct.conf文件获取对应tomcat路径和系统名称的信息
-#TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`
-#ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`
-#单个tomcat的情况，此处直接填写即可
-#TOMCATVERSION=
-#TOMCATPATH=
-#ROOTPARH=
+
 #备份对应系统
 backup() {
         #echo "Start to backup $TOMCATVERSION..."
         cd $TOMCATPATH/webapps/
 	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH\033[0m" 2>&1| tee -a  $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M:%S`.zip $ROOTPATH >>$TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup successfully.\033[0mThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M:%S`.zip" 2>&1|tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`.zip $ROOTPATH >>$TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup successfully.\033[0mThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`.zip" 2>&1|tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION backup successfully!!!"
 
 }
@@ -93,8 +90,8 @@ testbackup() {
         #echo "Start to backup $TOMCATVERSION before test..."
         cd $TOMCATPATH/webapps/
 	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH before test...\033[0m" 2>&1 | tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M:%S`TB.zip $ROOTPATH >>$TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup before test successfully.\033[0mThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M:%S`TB.zip" 2>&1 | tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip $ROOTPATH >>$TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup before test successfully.\033[0mThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip" 2>&1 | tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION backup before test successfully!!!"
 }
 #关闭对应tomcat
@@ -134,8 +131,8 @@ update() {
         #sleep 2
         \cp -a $TCTPATH/package/update/* $TOMCATPATH/webapps/$ROOTPATH 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
         #删除本次更新文件
-	mkdir -p $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M:%S`/
-        mv $TCTPATH/package/update/* $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M:%S`/ 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	mkdir -p $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/
+        mv $TCTPATH/package/update/* $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	sleep 3
 	#echo "$TOMCATVERSION is updated successfully!"
 	echo -e "\033[34m$TOMCATPATH/webapps/$ROOTPATH update successfully\033[0m" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
@@ -143,6 +140,32 @@ update() {
         echo "Start to restart $TOMCATPATH/webapps/$ROOTPATH..." 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	sleep 2
 tctrestart
+}
+#配置同时更新多个tomcat
+tgupdate(){
+#备份对应系统
+$TCTPATH/tctconfig.sh -b zs
+$TCTPATH/tctconfig.sh -b zyjj
+#同时更新两个对应系统
+if [ -z "`ls -A $TCTPATH/package/update`" ];then
+        echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $TCTPATH/package/update/";
+        exit 4
+else
+        echo -e "\033[34mStart to update tg\033[0m" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log;
+        sleep 2;
+        \cp -a $TCTPATH/package/update/* /opt/webserver/tomcat8-zsfusion/webapps/zs 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log;
+        \cp -a $TCTPATH/package/update/* /opt/webserver/tomcat8-zyjjfusion/webapps/zyjj 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log;
+fi
+#删除本次更新文件
+mkdir -p $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/
+mv $TCTPATH/package/update/* $TCTPATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+sleep 3
+#echo "$TOMCATVERSION is updated successfully!"
+echo -e "\033[34mtg update successfully\033[0m" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+#重启tomcat
+echo "Start to restart tg" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+$TCTPATH/tctconfig.sh -r zs
+$TCTPATH/tctconfig.sh -r zyjj
 }
 #清理参与进程,日志及备份文件
 clean(){
@@ -177,9 +200,9 @@ tctinstall(){
 		case $TCTOPTION in
 			y)
 				#cd $INSTALLPATH
-				mkdir -p $TCTPATH/package/backup/$INSTALLOPTION/`date +%Y-%m-%d-%H:%M:%S`/
-				mv $INSTALLPATH/tomcat8 $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M:%S`/
-				echo "The old $INSTALLOPTION have been moved to $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M:%S`/" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+				mkdir -p $TCTPATH/package/backup/$INSTALLOPTION/`date +%Y-%m-%d-%H:%M`/
+				mv $INSTALLPATH/tomcat8 $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
+				echo "The old $INSTALLOPTION have been moved to $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 				echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
 			n)
 				echo "You choosed no,we have done noting,exiting" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
@@ -198,9 +221,9 @@ redisinstall(){
                 case $TCTOPTION in
                         y)
                                 #cd $INSTALLPATH
-                                mkdir -p $TCTPATH/package/backup/$INSTALLOPTION/`date +%Y-%m-%d-%H:%M:%S`/
-                                mv $INSTALLPATH/redis $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M:%S`/
-                                echo "The old $INSTALLOPTION have been moved to $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M:%S`/" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                                mkdir -p $TCTPATH/package/backup/$INSTALLOPTION/`date +%Y-%m-%d-%H:%M`/
+                                mv $INSTALLPATH/redis $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
+                                echo "The old $INSTALLOPTION have been moved to $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
                                 echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
                         n)
                                 echo "You choosed no,we have done noting,exiting" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
@@ -222,9 +245,9 @@ jdkinstall(){
                 case $TCTOPTION in
                         y)
                                 #cd $INSTALLPATH
-                                mkdir -p $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M:%S`/
-                                mv $INSTALLPATH/jdk1.8.0_131 $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M:%S`/
-                                echo "The old $INSTALLOPTION have been moved to $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M:%S`/" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                                mkdir -p $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
+                                mv $INSTALLPATH/jdk1.8.0_131 $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
+                                echo "The old $INSTALLOPTION have been moved to $TCTPATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
                                 echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
                         n)
                                 echo "You choosed no,we have done noting,exiting" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
@@ -269,14 +292,14 @@ CONFIGURE(){
                 	tctrestart;;
         	u)
                 	backup
-			if [ -Z `ls -A $TCTPATH/package/update` ];then
+			if [ -z "`ls -A $TCTPATH/package/update`" ];then
 				echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $TCTPATH/package/update/";
 				exit 4
 			else 
 				update;
 			fi;;
         	tu)
-                	if [ -Z `ls -A $TCTPATH/package/update` ];then
+                	if [ -z "`ls -A $TCTPATH/package/update`" ];then
                                 echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $TCTPATH/package/update/";
                         	exit 5;
 			else
@@ -301,6 +324,11 @@ CONFIGURE(){
         rm -rf $TOMCATPATH/webapps/tee
 
 }
+#同时更新多个tomcat
+if [ $CONFIGURATION == tg ];then
+	tgupdate;
+	exit 0
+fi
 
 if [ $CONFIG_MODE == PRO ];then
 	 if [ $PROGRAM_MODE == single ];then
@@ -309,7 +337,7 @@ if [ $CONFIG_MODE == PRO ];then
                 ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $4 }'`;
 
         else
-                TOMCATVERSION=$2;
+                TOMCATVERSION=TOMCAT_$2;
 		if [ -z $TOMCATVERSION ];then
                         echo "error,Please choose a system to configure";
                         exit 7;
@@ -333,8 +361,9 @@ else
                         echo "error,Please choose a system to configure";
                         exit 7;
          	fi; 
-	 	if [ `cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | wc -l` -gt 1 ];then
-                	echo "The $TOMCATVERSION is repetitive in $TCTPATH/conf/tct.conf,Please change its name";
+		TOMCATVERSION=TOMCAT_$TOMCATVERSION;
+	 	if [ `cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | wc -l` -eq 1 ];then
+                	echo "The $TOMCATVERSION is wrong,please check it.";
                 	exit 8;
          	else
                 	TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`;
