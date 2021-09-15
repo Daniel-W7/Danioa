@@ -34,6 +34,11 @@ Option:
 		更新测试文件，不进行备份操作，只更新文件，重启tomcat，相当于-u的2，3，4功能
 		建议进行测试更新之前执行以下./tctconfig.sh -tb TOMCATVERSION，进行一下备份，避免出现不必要的损失
 
+	
+	-tg|--tgupdate
+
+		同时进行两个或者多个系统的更新，可通过配置tgupdate函数进行调整
+
 	-sh|--shutdown
 
 		关闭对应的tomcat
@@ -44,7 +49,9 @@ Option:
 
 	-l|--log
     
-		查看对应的tomcat的catalina.out的日志
+		查看对应的tomcat的catalina.out的日志，使用格式./tctconfig.sh -l TOMCATVERSION [COUNT]
+		例：./tctconfig.sh -l vm(查看vm对应的最近的系统的日志,并持续输出)
+		    ./tctconfig.sh -l vm 1000(查看vm对应的最近1000行的日志，并持续输出)	
 
  	-i|--install
 

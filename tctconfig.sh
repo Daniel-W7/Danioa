@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.1
+#Version:2.2
 #Auther：Daniel
-#Date&Time：2021年9月14日
+#Date&Time：2021年9月15日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -42,7 +42,8 @@ case $1 in
 		CONFIG_MODE=PRO;;
 	-l|--log)
 		CONFIGURATION=l
-		CONFIG_MODE=PRO;;
+		CONFIG_MODE=PRO
+		COUNT=$3;;
 	-i|--install)
 		CONFIGURATION=i
 		echo "Hello,please choose your path to install:"
@@ -57,7 +58,7 @@ case $1 in
 	-c|--clean)
 		CONFIGURATION=c;;
 	-h|--help)
-		echo "Usage:tctconf.sh [-b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-c|--clean|-h|--help] [TOMCATVERSION]"
+		echo "Usage:tctconf.sh [-b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-c|--clean|-h|--help] [TOMCATVERSION]"
 		exit 0;;
 	*)
 		CONFIG_MODE=COMMON
@@ -68,7 +69,11 @@ case $1 in
 		fi
 		echo "Please chose your configuration:(b|backup|r|restart|u|update|l|log|c|clean|q for quit):"
 		read -p "Your configuration:" CONFIGURATION
-		if [ $CONFIGURATION = q ];then
+		if [ -z $CONFIGURATION ];then
+			$TCTPATH/tctconfig.sh -h
+			exit 1;
+		fi
+		if [ QUIT_$CONFIGURATION = QUIT_q ];then
 			echo "exiting...";
 			exit 0;
 		fi
@@ -78,9 +83,9 @@ esac
 backup() {
         #echo "Start to backup $TOMCATVERSION..."
         cd $TOMCATPATH/webapps/
-	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH\033[0m" 2>&1| tee -a  $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH\033[0m\nThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`.zip" 2>&1| tee -a  $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
         zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`.zip $ROOTPATH >>$TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup successfully.\033[0mThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`.zip" 2>&1|tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup successfully.\033[0m" 2>&1|tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION backup successfully!!!"
 
 }
@@ -89,9 +94,9 @@ backup() {
 testbackup() {
         #echo "Start to backup $TOMCATVERSION before test..."
         cd $TOMCATPATH/webapps/
-	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH before test...\033[0m" 2>&1 | tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip $ROOTPATH >>$TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup before test successfully.\033[0mThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip" 2>&1 | tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH before test...\033[0m\nThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip" 2>&1 | tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip $ROOTPATH >> $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup before test successfully.\033[0m" 2>&1 | tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION backup before test successfully!!!"
 }
 #关闭对应tomcat
@@ -100,8 +105,9 @@ tctshut(){
         #关闭对应的tomcat
         #echo "$TOMCATVERSION is shuting..."
 	echo -e "\033[36mStart to shut $TOMCATPATH/webapps/$ROOTPATH\033[0m" 2>&1| tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-	$TOMCATPATH/bin/shutdown.sh &>$TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
-        ps -ef | grep $TOMCATPATH | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
+	$TOMCATPATH/bin/shutdown.sh &>/dev/null
+        sleep 3
+	ps -ef | grep $TOMCATPATH | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
 	echo -e "\033[33m$TOMCATPATH/webapps/$ROOTPATH is shutted successfully\033[0m" 2>&1|tee -a $TCTPATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION is shutted successfully..."
 	sleep 1
@@ -120,6 +126,20 @@ tctstart(){
 tctrestart(){
 	tctshut
 	tctstart
+}
+#检查TOMCATVERSION是否合法
+TOMCAT_CHECK(){
+
+	if [ -z $TOMCATVERSION ];then
+        	echo "error,Please choose a system to configure";
+        	exit 7;
+        elif [ `cat $TCTPATH/conf/tct.conf | grep TOMCAT_$TOMCATVERSION | wc -l` -gt 1 ];then
+        	echo "The $TOMCATVERSION is more than one in tct.conf,Please check it";
+        	exit 8;
+        elif [ `cat $TCTPATH/conf/tct.conf | grep TOMCAT_$TOMCATVERSION | wc -l` -lt 1 ];then
+		echo "The $TOMCATVERSION is not exist in tct.conf,Please check it";
+                exit 9;
+	fi
 }
 #进行日常更新
 update() {
@@ -291,11 +311,11 @@ CONFIGURE(){
         	r)
                 	tctrestart;;
         	u)
-                	backup
-			if [ -z "`ls -A $TCTPATH/package/update`" ];then
-				echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $TCTPATH/package/update/";
-				exit 4
-			else 
+                	if [ -z "`ls -A $TCTPATH/package/update`" ];then
+                                echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $TCTPATH/package/update/";
+                                exit 4
+                        else
+				backup
 				update;
 			fi;;
         	tu)
@@ -305,17 +325,12 @@ CONFIGURE(){
 			else
                                 update;
                         fi;;
+		l)	
+	                tail -"$COUNT"f $TOMCATPATH/logs/catalina.out;;
         	sh)
 			tctshut;;
 		st)
 			tctstart;;
-		l)
-                	tail -1000f $TOMCATPATH/logs/catalina.out;;
-		i)
-			install;;
-		c)
-			clean;;
-
 		*)
 			echo "Usage:tctconf.sh [-b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-c|--clean|-h|--help] [TOMCATVERSION]"
                 exit 6;;		
@@ -324,51 +339,46 @@ CONFIGURE(){
         rm -rf $TOMCATPATH/webapps/tee
 
 }
-#同时更新多个tomcat
-if [ $CONFIGURATION == tg ];then
-	tgupdate;
-	exit 0
-fi
 
-if [ $CONFIG_MODE == PRO ];then
-	 if [ $PROGRAM_MODE == single ];then
-                TOMCATVERSION=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $2 }'`;
-                TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $3 }'`;
-                ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $4 }'`;
-
-        else
-                TOMCATVERSION=TOMCAT_$2;
-		if [ -z $TOMCATVERSION ];then
-                        echo "error,Please choose a system to configure";
-                        exit 7;
-                fi
-                if [ `cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | wc -l` -gt 1 ];then
-                        echo "The $TOMCATVERSION is repetitive in $TCTPATH/conf/tct.conf,Please change its name";
-                        exit 8;
+case $CONFIGURATION in
+	tg)
+		if [ -z "`ls -A $TCTPATH/package/update`" ];then
+	                echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $TCTPATH/package/update/";
+        	        exit 5;
                 else
-                        TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`;
-                        ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;
-                fi;
-        fi;
-	CONFIGURE;
-else
-	if [ $PROGRAM_MODE == single ];then
-                TOMCATVERSION=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $2 }'`;
-                TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $3 }'`;
-                ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $4 }'`;
-	else
-	 	if [ -z $TOMCATVERSION ];then
-                        echo "error,Please choose a system to configure";
-                        exit 7;
-         	fi; 
-		TOMCATVERSION=TOMCAT_$TOMCATVERSION;
-	 	if [ `cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | wc -l` -eq 1 ];then
-                	echo "The $TOMCATVERSION is wrong,please check it.";
-                	exit 8;
-         	else
-                	TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $2 }'`;
-                	ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep $TOMCATVERSION | awk -F':' '{ print $3 }'`;
-	 	fi;
-	fi;
-	CONFIGURE;
-fi
+                	tgupdate;
+                fi;;
+	c)
+		clean;;
+        i)
+                install;;
+        c)
+                clean;;
+
+	*)
+		if [ $CONFIG_MODE == PRO ];then
+	 		if [ $PROGRAM_MODE == single ];then
+                		TOMCATVERSION=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $2 }'`;
+                		TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $3 }'`;
+                		ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $4 }'`;
+
+        		else
+				TOMCATVERSION=$2
+				TOMCAT_CHECK;
+                        	TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep TOMCAT_$TOMCATVERSION | awk -F':' '{ print $2 }'`;
+                        	ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep TOMCAT_$TOMCATVERSION | awk -F':' '{ print $3 }'`;
+        		fi;
+			CONFIGURE;
+		else
+			if [ $PROGRAM_MODE == single ];then
+                		TOMCATVERSION=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $2 }'`;
+                		TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $3 }'`;
+                		ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep SINGLE_PATH | awk -F':' '{ print $4 }'`;
+			else
+               			TOMCAT_CHECK; 	
+				TOMCATPATH=`cat $TCTPATH/conf/tct.conf | grep TOMCAT_$TOMCATVERSION | awk -F':' '{ print $2 }'`;
+               			ROOTPATH=`cat $TCTPATH/conf/tct.conf | grep TOMCAT_$TOMCATVERSION | awk -F':' '{ print $3 }'`;
+			fi;
+			CONFIGURE;
+		fi;;
+esac
