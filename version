@@ -14,6 +14,8 @@ tomcat自动重启配置脚本，之后会试着加上一些系统配置相关�
 
 修复部分bug
 
+将tee文件的清理方式由rm改为mv，移动到logs文件夹中
+
 # v2.2
 
 添加TOMCAT_CHECK函数来判断TOMCATVERSION是否合规，不合规的话给出原因

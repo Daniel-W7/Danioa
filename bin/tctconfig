@@ -12,7 +12,7 @@ set -m
 PRONAME=`basename $0`
 #获取文件运行的当前目录
 BINPATH=$(cd "$(dirname "$0")"; pwd)
-TCTPATH=`echo $BINPATH | sed 's/bin//g'`
+TCTPATH=`echo $BINPATH | sed 's@/bin@@g'`
 #定义程序的运行模式，单用户模式或者多用户模式
 PROGRAM_MODE=`cat $TCTPATH/conf/tct.conf | grep PROGRAM_MODE | awk -F'=' '{ print $2 }'`
 #配置选项，如果没有输入选项直接进入提示页面
@@ -336,8 +336,8 @@ CONFIGURE(){
 			echo "Usage:tctconf.sh [-b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-c|--clean|-h|--help] [TOMCATVERSION]"
                 exit 6;;		
 	esac
-	rm -rf $TCTPATH/tee
-        rm -rf $TOMCATPATH/webapps/tee
+	mv $TCTPATH/tee $TCTPATH/logs &> /dev/null
+        mv $TOMCATPATH/webapps/tee $TCTPATH/logs &> /dev/null
 
 }
 
