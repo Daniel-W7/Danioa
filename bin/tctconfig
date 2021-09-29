@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.2
+#Version:2.3
 #Auther：Daniel
-#Date&Time：2021年9月15日
+#Date&Time：2021年9月29日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -11,7 +11,8 @@ set -m
 #获取运行的程序名
 PRONAME=`basename $0`
 #获取文件运行的当前目录
-TCTPATH=$(cd "$(dirname "$0")"; pwd)
+BINPATH=$(cd "$(dirname "$0")"; pwd)
+TCTPATH=`echo $BINPATH | sed 's/bin//g'`
 #定义程序的运行模式，单用户模式或者多用户模式
 PROGRAM_MODE=`cat $TCTPATH/conf/tct.conf | grep PROGRAM_MODE | awk -F'=' '{ print $2 }'`
 #配置选项，如果没有输入选项直接进入提示页面
@@ -189,7 +190,7 @@ $TCTPATH/tctconfig.sh -r zyjj
 }
 #清理参与进程,日志及备份文件
 clean(){
-	#ps -ef | grep tctconfig.sh | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh - &>/dev.null
+	rm -rf $TCTPATH/package/update/*
 	read -p "Do you want to clean the logs in $TCTPATH/logs?(y for yes/n for no)" CLOG
 	case $CLOG in
         	y)

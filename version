@@ -2,6 +2,18 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+# v2.3
+
+新添加bin目录用来放置程序
+
+修改tctconfig.sh名称为tctconfig
+
+添加instct脚本用来安装配置tctconfig,
+
+添加removtct脚本用来卸载tctconfig
+
+修复部分bug
+
 # v2.2
 
 添加TOMCAT_CHECK函数来判断TOMCATVERSION是否合规，不合规的话给出原因

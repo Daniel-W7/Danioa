@@ -4,8 +4,25 @@
 
 详细文档及配置内容，请查看https://www.danielw7.com/tctconfig/
 
-命令格式
-	tctconfig.sh [OPTION] [TOMCATNAME]
+1、安装步骤
+
+首先赋予./tctconfig/bin 目录下的所有文件执行权限
+
+	chmod +x -R ./tctconfig/bin
+安装
+
+	./tctconfig/bin/instct
+
+卸载
+
+	removtct
+
+	若是无法找到removtct,说明程序未安装
+
+2、命令格式
+
+	tctconfig [OPTION] [TOMCATNAME]
+	tctconfig -l TOMCATNAME [COUNT]
 
 Option:
 
@@ -32,7 +49,7 @@ Option:
 	-tu|--testupdate
     
 		更新测试文件，不进行备份操作，只更新文件，重启tomcat，相当于-u的2，3，4功能
-		建议进行测试更新之前执行以下./tctconfig.sh -tb TOMCATVERSION，进行一下备份，避免出现不必要的损失
+		建议进行测试更新之前执行以下tctconfig -tb TOMCATVERSION，进行一下备份，避免出现不必要的损失
 
 	
 	-tg|--tgupdate
@@ -49,9 +66,9 @@ Option:
 
 	-l|--log
     
-		查看对应的tomcat的catalina.out的日志，使用格式./tctconfig.sh -l TOMCATVERSION [COUNT]
-		例：./tctconfig.sh -l vm(查看vm对应的最近的系统的日志,并持续输出)
-		    ./tctconfig.sh -l vm 1000(查看vm对应的最近1000行的日志，并持续输出)	
+		查看对应的tomcat的catalina.out的日志，使用格式:tctconfig -l TOMCATVERSION [COUNT]
+		例：tctconfig -l vm(查看vm对应的系统的日志,并持续输出)
+		    tctconfig -l vm 1000(查看vm对应的系统的最近1000行的日志，并持续输出)	
 
  	-i|--install
 
@@ -67,7 +84,7 @@ Option:
 
 tct.conf:
 	
-	tctconfig.sh的配置文件,用于配置tctconfig.sh的运行模式以及应用信息。
+	tctconfig的配置文件,用于配置tctconfig的运行模式以及应用信息。
 	
 	TOMCATVERSION:
         	为tomcat的版本名称，版本信息位于./tctconfig/conf/tct.conf中，以分号隔开

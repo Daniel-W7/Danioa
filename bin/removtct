@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "Start to remove tctconfig"
+rm -rf /etc/profile.d/tctexport.sh
+echo "tctconfig has been removed successfully"
+su - `whoami`
