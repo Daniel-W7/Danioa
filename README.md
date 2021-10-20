@@ -98,5 +98,6 @@ tct.conf:
 
 	TCT_PATH:
 		应用程序以及日志的文件的放置家目录
+		
 	PACKAGE_PATH:
 		更新文件及backup文件放置家目录

@@ -6,9 +6,11 @@ tomcat自动重启配置脚本，之后会试着加上一些系统配置相关�
 
 添加安装配置，新增tctinstall.run安装文件，执行bash tctinstall.run即可进行安装部署
 
-程序部署文件夹修改为/usr/bin,日志及初始文件夹为/usr/local/tctconfig
+程序二进制文件部署文件夹修改为/usr/bin,
 
-更新文件夹修改为程序安装用户家目录下的tctconfig
+日志及程序初始文件夹为/usr/local/tctconfig
+
+package文件夹修改为安装程序的用户家目录下的tctconfig/package，例/root/tctconfig/package
 
 添加-v选项，可查看当前的程序版本，并查看对应的配置
 
