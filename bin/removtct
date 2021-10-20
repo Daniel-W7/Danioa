@@ -1,5 +1,7 @@
 #!/bin/bash
 echo "Start to remove tctconfig"
-rm -rf /etc/profile.d/tctexport.sh
+rm -rf /usr/bin/tctconfig
+echo "/usr/bin/tctconfig has been removed"
+rm -rf /etc/tct.conf
+echo "/etc/tct.conf has been removed"
 echo "tctconfig has been removed successfully"
-su - `whoami`
