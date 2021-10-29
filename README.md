@@ -5,20 +5,21 @@
 详细文档及配置内容，请查看https://www.danielw7.com/tctconfig/
 
 1、安装步骤
-
-首先赋予./tctconfig/bin 目录下的所有文件执行权限
-
-	chmod +x -R ./tctconfig/bin
-安装
-
-	./tctconfig/bin/instct
+ 源码安装
+	首先赋予./tctconfig/bin 目录下的所有文件执行权限
+		chmod +x -R ./tctconfig/bin
+	安装
+		./tctconfig/bin/instct
+ run文件安装
+	安装
+		bash tctcofig-xx.run(可直接下载tctconfig-xx.run,或者在源码包中可找到tctconfig-xx.run)
 
 卸载
 
-	removtct
+ 		removtct
 
-	若是无法找到removtct,说明程序未安装
-
+		若是无法找到removtct,说明程序未安装
+ 
 2、命令格式
 
 	tctconfig [OPTION] [TOMCATNAME]
@@ -42,9 +43,10 @@ Option:
 
 		更新对应的tomcat，有4个步骤；
 		 1、备份对应的tomcat，类似-b命令
-		 2、更新文件，将./tctconfig/packages/update文件夹下面的所有更新文件拷贝到$TOMCATPATH/webapps/$ROOTPATH中，并覆盖重复的文件
-		 3、清理更新文件，将./tctconfig/packages/update文件夹下面的所有更新文件移动到./tctconfig/packages/backup/$TOMCATVERSION/YYYY-MM-DD-HH:MM:SS文件夹中
-		 4、重启对应tomcat，类似-r命令
+		 2、关闭对应的tomcat，类似-sh命令
+		 3、更新文件，将$PACKAGE_PATH/packages/update文件夹下面的所有更新文件拷贝到$TOMCATPATH/webapps/$ROOTPATH中，并覆盖重复的文件
+		 4、清理更新文件，将$PACKAGE_PATH/packages/update文件夹下面的所有更新文件移动到./tctconfig/packages/backup/$TOMCATVERSION/YYYY-MM-DD-HH:MM:SS文件夹中
+		 5、开启对应tomcat，类似-st命令
 
 	-tu|--testupdate
     
@@ -92,9 +94,9 @@ tct.conf:
 	tctconfig的配置文件,用于配置tctconfig的运行模式以及应用信息。
 	
 	TOMCATVERSION:
-        	为tomcat的版本名称，版本信息位于./tctconfig/conf/tct.conf中，以分号隔开
+        	为tomcat的版本名称，版本信息位于/etc/tct.conf中，以分号隔开
         例：
-        	Tomcat:/opt/webserver/Tomcat-8.5.63:ROOT
+        	vm:/opt/webserver/tomcat8:ROOT
         	tomcat版本:tomcat部署路径:根路径
 
 	PROGRAM_MODE:
@@ -102,3 +104,10 @@ tct.conf:
 	SINGLE_PATH:
 		后面跟的是单用户模式的应用信息。
 		模式为TOMCATVERSION:TOMCATPATH:ROOTPATH
+	TCT_PATH:
+		为程序文件的部署的目录,默认为/usr/local/tctconfig
+		格式为:TCT_PATH=/usr/local/tctconfig
+	PACKAGE_PATH:
+		为更新包的部署目录,默认为用户的家目录下的tctconfig目录
+		格式为:PACKAGE_PATH=/root/tctconfig
+

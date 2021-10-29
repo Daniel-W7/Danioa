@@ -157,6 +157,9 @@ TOMCAT_CHECK(){
 }
 #进行日常更新
 update() {
+
+	#关闭对应tomcat
+	tctshut
 	#切换到当前应用程序的目录
 	#cd $TCT_PATH
         #进行文件更新
@@ -171,9 +174,10 @@ update() {
 	#echo "$TOMCATVERSION is updated successfully!"
 	echo -e "\033[34m$TOMCATPATH/webapps/$ROOTPATH update successfully\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
         #重启tomcat
-        echo "Start to restart $TOMCATPATH/webapps/$ROOTPATH..." 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+        echo "Start to start $TOMCATPATH/webapps/$ROOTPATH..." 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
 	sleep 2
-tctrestart
+	#开启对应tomcat
+	tctstart
 }
 #配置同时更新多个tomcat
 tgupdate(){
