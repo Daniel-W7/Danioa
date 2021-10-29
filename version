@@ -16,6 +16,8 @@ tomcat自动重启配置脚本，之后会试着加上一些系统配置相关�
 
 修改更新顺序，关闭tomcat以后再进行更新
 
+修改run文件名称为tctconfig-xx.run
+
 # v2.4
 
 添加安装配置，新增tctinstall.run安装文件，执行bash tctinstall.run即可进行安装部署
