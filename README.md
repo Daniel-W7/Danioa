@@ -6,11 +6,18 @@
 
 1、安装步骤
 
-	bash tctinstall.run或bash ./tctconfig/bin/instct
+首先赋予./tctconfig/bin 目录下的所有文件执行权限
 
-	卸载
+	chmod +x -R ./tctconfig/bin
+安装
 
-		bash /usr/local/removtct
+	./tctconfig/bin/instct
+
+卸载
+
+	removtct
+
+	若是无法找到removtct,说明程序未安装
 
 2、命令格式
 
@@ -59,9 +66,14 @@ Option:
 
 	-l|--log
     
-		查看对应的tomcat的catalina.out的日志，使用格式:tctconfig -l TOMCATVERSION [COUNT]
-		例：tctconfig -l vm(查看vm对应的系统的日志,并持续输出)
-		    tctconfig -l vm 1000(查看vm对应的系统的最近1000行的日志，并持续输出)	
+		查看对应的tomcat的catalina.out的日志，使用格式:
+			multi模式：tctconfig -l TOMCATVERSION [COUNT]
+				例：tctconfig -l vm(查看vm对应的系统的日志,并持续输出)
+		    		    tctconfig -l vm 1000(查看vm对应的系统的最近1000行的日志，并持续输出)	
+			
+			single模式：tctconfig -l [COUNT]
+				例: tctconfig -l(查看single tomcat对应的系统的日志,并持续输出)
+                                    tctconfig -l 1000(查看vm对应的系统的最近1000行的日志，并持续输出)
 
  	-i|--install
 
@@ -75,14 +87,10 @@ Option:
     
 		查看帮助
 
-	-v|--version
-
-		查看当前程序版本，并查看对应程序文件位置
-		
 tct.conf:
 	
-	tctconfig的配置文件,用于配置tctconfig的运行模式以及应用信息，位置为:/etc/tct.conf
-
+	tctconfig的配置文件,用于配置tctconfig的运行模式以及应用信息。
+	
 	TOMCATVERSION:
         	为tomcat的版本名称，版本信息位于./tctconfig/conf/tct.conf中，以分号隔开
         例：
@@ -91,13 +99,6 @@ tct.conf:
 
 	PROGRAM_MODE:
 		程序的运行模式，分为单系统模式（single）和多系统模式（multi），
-	
 	SINGLE_PATH:
 		后面跟的是单用户模式的应用信息。
 		模式为TOMCATVERSION:TOMCATPATH:ROOTPATH
-
-	TCT_PATH:
-		应用程序以及日志的文件的放置家目录
-		
-	PACKAGE_PATH:
-		更新文件及backup文件放置家目录

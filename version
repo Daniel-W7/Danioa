@@ -2,6 +2,16 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+# v2.5
+
+修改-l命令中的COUNT参数配置,区分不同模式下的COUNT的配置方式;
+
+输出日志方式:
+	single模式：
+		tctconfig -l [COUNT]
+	multi模式：
+		tctconfig -l TOMCATVERSION [COUNT] 
+
 # v2.4
 
 添加安装配置，新增tctinstall.run安装文件，执行bash tctinstall.run即可进行安装部署
@@ -27,8 +37,6 @@ package文件夹修改为安装程序的用户家目录下的tctconfig/package�
 添加removtct脚本用来卸载tctconfig
 
 修复部分bug
-
-将tee文件的清理方式由rm改为mv，移动到logs文件夹中
 
 # v2.2
 

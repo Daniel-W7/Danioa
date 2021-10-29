@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.4
+#Version:2.5
 #Auther：Daniel
-#Date&Time：2021年10月20日
+#Date&Time：2021年10月29日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -12,7 +12,7 @@ set -m
 #PRONAME=`basename $0`
 #获取文件运行的当前目录
 #BINPATH=$(cd "$(dirname "$0")"; pwd)
-VERSION=2.4
+VERSION=2.5
 TCT_PATH=`cat /etc/tct.conf | grep TCT_PATH | awk -F'=' '{ print $2 }'`
 #定义程序的运行模式，单用户模式或者多用户模式
 PACKAGE_PATH=`cat /etc/tct.conf | grep PACKAGE_PATH | awk -F'=' '{ print $2 }'`
@@ -47,7 +47,11 @@ case $1 in
 	-l|--log)
 		CONFIGURATION=l
 		CONFIG_MODE=PRO
-		COUNT=$3;;
+		if [ $PROGRAM_MODE == multi ];then
+			COUNT=$3
+		else
+			COUNT=$2
+		fi;;
 	-i|--install)
 		CONFIGURATION=i
 		echo "Hello,please choose your path to install:"
@@ -68,7 +72,7 @@ case $1 in
 		echo -e "\033[35mThe PACKAGE_PATH is $HOME/tctconfig\033[0m"
 		exit 0;;
 	-h|--help)
-	echo -e "Usage:tctconf.sh [-option] [TOMCATVERSION]\n  Options:\n  -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate\n  -tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log\n  -i|--install|-c|--clean|-h|--help|-v|--version]\n"
+	echo -e "Usage:tctconf.sh [-option] [TOMCATVERSION] [COUNT]\n  Options:\n  -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate\n  -tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log\n  -i|--install|-c|--clean|-h|--help|-v|--version]\n"
 		exit 0;;
 	*)
 		CONFIG_MODE=COMMON

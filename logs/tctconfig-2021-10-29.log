@@ -1,0 +1,9 @@
+[36mStart to shut /opt/webserver/tomcat8/webapps/ROOT[0m
+[33m/opt/webserver/tomcat8/webapps/ROOT is shutted successfully[0m
+[32mStarting /opt/webserver/tomcat8/webapps/ROOT ...[0m
+Using CATALINA_BASE:   /opt/webserver/tomcat8
+Using CATALINA_HOME:   /opt/webserver/tomcat8
+Using CATALINA_TMPDIR: /opt/webserver/tomcat8/temp
+Using JRE_HOME:        /opt/webserver/jdk1.8.0_131/jre
+Using CLASSPATH:       /opt/webserver/tomcat8/bin/bootstrap.jar:/opt/webserver/tomcat8/bin/tomcat-juli.jar
+Tomcat started.
