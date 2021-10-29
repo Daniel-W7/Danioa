@@ -5,13 +5,21 @@
 详细文档及配置内容，请查看https://www.danielw7.com/tctconfig/
 
 1、安装步骤
+
  源码安装
+
 	首先赋予./tctconfig/bin 目录下的所有文件执行权限
+
 		chmod +x -R ./tctconfig/bin
+
 	安装
+
 		./tctconfig/bin/instct
+
  run文件安装
+
 	安装
+
 		bash tctcofig-xx.run(可直接下载tctconfig-xx.run,或者在源码包中可找到tctconfig-xx.run)
 
 卸载
