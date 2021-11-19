@@ -6,28 +6,55 @@
 
 1、安装步骤
 
- 源码安装
+a)root账户或有权限访问/etc,/usr/bin的账户可用software模式安装
+
+（1） 源码安装
 
 	首先赋予./tctconfig/bin 目录下的所有文件执行权限
 
-		chmod +x -R ./tctconfig/bin
+		chmod +x -R xx/tctconfig/bin
 
 	安装
 
-		./tctconfig/bin/instct
+		xx/tctconfig/bin/instct
 
- run文件安装
+（2）run文件安装
 
 	安装
 
 		bash tctcofig-xx.run(可直接下载tctconfig-xx.run,或者在源码包中可找到tctconfig-xx.run)
 
-卸载
+	卸载
 
  		removtct
 
-		若是无法找到removtct,说明程序未安装
- 
+		若是无法找到removtct,说明程序未通过install方式安装
+
+b)所有用户都可用script模式部署(默认部署路径为$HOME)
+
+	安装
+		（1）给予权限
+	
+			首先赋予$HOME/tctconfig/bin 目录下的所有文件执行权限
+
+                	chmod +x -R $HOME/tctconfig/bin
+
+		（2）配置$HOME/tctconfig/bin/tctconfig文件的INSTALL_OPTION变量
+
+			INSTALL_OPTION=script
+
+		（3）配置环境变量（配置完之后需要重新登陆一下）
+
+			$HOME/.bash_profile中添加$HOME/tctconfig/bin路径
+
+			例：如果tctconfig文件夹在用户家目录的话，添加如下语句
+				PATH=$PATH:$HOME/tctconfig/bin
+				export PATH
+	卸载
+		（1）删除环境变量
+
+		（2）删除tctconfig文件夹
+
 2、命令格式
 
 	tctconfig [OPTION] [TOMCATNAME]
@@ -102,7 +129,7 @@ tct.conf:
 	tctconfig的配置文件,用于配置tctconfig的运行模式以及应用信息。
 	
 	TOMCATVERSION:
-        	为tomcat的版本名称，版本信息位于/etc/tct.conf中，以分号隔开
+        	为tomcat的版本名称，版本信息位于/etc/tct.conf或者$HOME/tctconfig/conf/tct.conf中，以分号隔开
         例：
         	vm:/opt/webserver/tomcat8:ROOT
         	tomcat版本:tomcat部署路径:根路径
@@ -112,10 +139,4 @@ tct.conf:
 	SINGLE_PATH:
 		后面跟的是单用户模式的应用信息。
 		模式为TOMCATVERSION:TOMCATPATH:ROOTPATH
-	TCT_PATH:
-		为程序文件的部署的目录,默认为/usr/local/tctconfig
-		格式为:TCT_PATH=/usr/local/tctconfig
-	PACKAGE_PATH:
-		为更新包的部署目录,默认为用户的家目录下的tctconfig目录
-		格式为:PACKAGE_PATH=/root/tctconfig
 

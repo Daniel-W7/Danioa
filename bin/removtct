@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Start to remove tctconfig"
-rm -rf /usr/bin/tctconfig
+rm -rf /usr/bin/tctconfig /usr/bin/removtct /usr/bin/instct
 echo "/usr/bin/tctconfig has been removed"
 rm -rf /etc/tct.conf
 echo "/etc/tct.conf has been removed"

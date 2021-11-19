@@ -2,6 +2,22 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+# v2.6
+
+开启关闭tomcat之前添加cd $TOMCAT_PATH命令，避免某些根据程序启动路径生成日志的问题出现
+
+更新tct.conf,将配置文件关键字锁定在首位，避免出现问题
+
+tctconfig主程序添加CONF_FILE变量，用于保存tct.conf的位置，避免没有权限访问/etc和/usr/bin会出现的部署问题
+
+优化卸载功能，将安装卸载文件添加到/usr/bin文件夹中
+
+tctconfig程序添加INSTALL_OPTION函数，配置脚本(script)模式或者是软件(software)模式(默认为software模式)
+根据程序是software模式还是script模式来判断配置文件及日志文件的的路径
+如果INSTALL_OPTION配置为script模式，则设置tct.conf的路径为$HOME/tctconfig/conf/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig,日志路径为$HOME/tctconfig/logs
+注释掉INSTALL_OPTION或者是配置其他值，则设置tct.conf的路径为/etc/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig，日志路径为/usr/local/logs,
+根据程序是software模式还是script模式来判断配置文件及日志文件的的路径
+
 # v2.5
 
 修改-l命令中的COUNT参数配置,区分不同模式下的COUNT的配置方式;

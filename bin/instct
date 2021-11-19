@@ -6,7 +6,7 @@ PRONAME=`basename $0`
 BINPATH=$(cd "$(dirname "$0")"; pwd)
 cd $BINPATH
 echo "Start to install tctconfig"
-\cp ./tctconfig /usr/bin/
+\cp ./* /usr/bin/
 echo "The program file is /usr/bin/tctconfig"
 \cp ../conf/tct.conf /etc/
 echo "The conf file is /etc/tct.conf"
