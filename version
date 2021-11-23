@@ -2,6 +2,18 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+# v2.6.1
+
+添加redis_configure选项，可通过-st命令开启，-sh命令关闭，-r命令重启对应目录的所有redis
+
+修复脚本模式下日志还是定位到/usr/local/tctconfig/logs文件夹的bug
+
+tctconfig -v里面添加install option选项，支持查看INSTALL_OPTION变量，判断安装模式
+
+添加-gt选项，用于同时更新两个tomcat，更改同时更新两个tomcat的方式
+
+修改版本号定义方式，添加小版本号
+
 # v2.6
 
 开启关闭tomcat之前添加cd $TOMCAT_PATH命令，避免某些根据程序启动路径生成日志的问题出现

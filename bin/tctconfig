@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.6
+#Version:2.6.1
 #Auther：Daniel
-#Date&Time：2021年11月19日
+#Date&Time：2021年11月22日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -13,7 +13,7 @@ set -m
 #获取文件运行的当前目录
 #BINPATH=$(cd "$(dirname "$0")"; pwd)
 
-VERSION=2.6
+VERSION=2.6.1
 
 #INSTALL_OPTION配置tctconfig为software模式或者是script模式;
 #如果INSTALL_OPTION配置为script模式，则设置tct.conf的路径为$HOME/tctconfig/conf/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig,日志路径为$HOME/tctconfig/logs
@@ -28,7 +28,7 @@ if [ $INSTALL_OPTION == script ];then
 	PACKAGE_PATH=$HOME/tctconfig
 else
 	CONF_FILE=/etc/tct.conf
-	TCT_PATH=/usr/local/tctconfig
+	TCT_PATH=$TCT_PATH
 	PACKAGE_PATH=$HOME/tctconfig
 fi
 #TCT_PATH=`cat $CONF_FILE | grep ^TCT_PATH | awk -F'=' '{ print $2 }'`
@@ -38,6 +38,7 @@ fi
 PROGRAM_MODE=`cat $CONF_FILE | grep ^PROGRAM_MODE | awk -F'=' '{ print $2 }'`
 
 #配置选项，如果没有输入选项直接进入提示页面
+#CONFIG_MODE为配置方式，可以选提示方式（COMMON），或者直接输入完整命令方式（PRO）
 case $1 in
 	-b|--backup)
 		CONFIGURATION=b
@@ -71,6 +72,10 @@ case $1 in
 		else
 			COUNT=$2
 		fi;;
+	-rd|--redis)
+		CONFIGURATION=rd
+		REDIS_ACTION=$2
+		CONFIG_MODE=PRO;;
 	-i|--install)
 		CONFIGURATION=i
 		echo "Hello,please choose your path to install:"
@@ -116,9 +121,9 @@ esac
 backup() {
         #echo "Start to backup $TOMCATVERSION..."
         cd $TOMCATPATH/webapps/
-	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH\033[0m\nThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`.zip" 2>&1| tee -a  /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`.zip $ROOTPATH >>/usr/local/tctconfig/logs/$TOMCATVERSION-backup-`date +%Y-%m-%d`.log
-	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup successfully.\033[0m" 2>&1|tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH\033[0m\nThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`.zip" 2>&1| tee -a  $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`.zip $ROOTPATH >>$TCT_PATH/logs/$TOMCATVERSION-backup-`date +%Y-%m-%d`.log
+	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup successfully.\033[0m" 2>&1|tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION backup successfully!!!"
 
 }
@@ -127,9 +132,9 @@ backup() {
 testbackup() {
         #echo "Start to backup $TOMCATVERSION before test..."
         cd $TOMCATPATH/webapps/
-	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH before test...\033[0m\nThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip" 2>&1 | tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip $ROOTPATH >> /usr/local/tctconfig/logs/$TOMCATVERSION-backup-`date +%Y-%m-%d`.log
-	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup before test successfully.\033[0m" 2>&1 | tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33mStart to backup $TOMCATPATH/webapps/$ROOTPATH before test...\033[0m\nThe back file is $TOMCATPATH/webapps/$ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip" 2>&1 | tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+        zip -r $ROOTPATH`date +%Y-%m-%d-%H:%M`TB.zip $ROOTPATH >> $TCT_PATH/logs/$TOMCATVERSION-backup-`date +%Y-%m-%d`.log
+	echo -e "\033[32m$TOMCATPATH/webapps/$ROOTPATH backup before test successfully.\033[0m" 2>&1 | tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION backup before test successfully!!!"
 }
 #关闭对应tomcat
@@ -137,12 +142,12 @@ tctshut(){
 	#echo "Start to shutdown $TOMCATVERSION..."
         #关闭对应的tomcat
         #echo "$TOMCATVERSION is shuting..."
-	echo -e "\033[36mStart to shut $TOMCATPATH/webapps/$ROOTPATH\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[36mStart to shut $TOMCATPATH/webapps/$ROOTPATH\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	cd $TOMCATPATH
 	$TOMCATPATH/bin/shutdown.sh &>/dev/null
         sleep 3
 	ps -ef | grep $TOMCATPATH | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
-	echo -e "\033[33m$TOMCATPATH/webapps/$ROOTPATH is shutted successfully\033[0m" 2>&1|tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33m$TOMCATPATH/webapps/$ROOTPATH is shutted successfully\033[0m" 2>&1|tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#echo "$TOMCATVERSION is shutted successfully..."
 	sleep 1
 }
@@ -151,10 +156,10 @@ tctstart(){
  	#启动tomcat,并查看对应日志
         #echo "$TOMCATVERSION is starting..." 
         #sleep 1
-	echo -e "\033[32mStarting $TOMCATPATH/webapps/$ROOTPATH ...\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[32mStarting $TOMCATPATH/webapps/$ROOTPATH ...\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	cd $TOMCATPATH
-	$TOMCATPATH/bin/startup.sh >>/usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-	#echo -e "\033[31m$TOMCATPATH/webapps/$ROOTPATH start successfully\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	$TOMCATPATH/bin/startup.sh >>$TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	#echo -e "\033[31m$TOMCATPATH/webapps/$ROOTPATH start successfully\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
         tail -f $TOMCATPATH/logs/catalina.out
         #ps -ef | grep ^tctconfig | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
 }
@@ -185,17 +190,17 @@ update() {
 	#cd $TCT_PATH
         #进行文件更新
         #echo "Start to update $TOMCATVERSION..."
-	echo -e "\033[34mStart to update $TOMCATPATH/webapps/$ROOTPATH\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[34mStart to update $TOMCATPATH/webapps/$ROOTPATH\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
         #sleep 2
-        \cp -a $PACKAGE_PATH/package/update/* $TOMCATPATH/webapps/$ROOTPATH 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+        \cp -a $PACKAGE_PATH/package/update/* $TOMCATPATH/webapps/$ROOTPATH 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
         #删除本次更新文件
 	mkdir -p $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/
-        mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+        mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	sleep 3
 	#echo "$TOMCATVERSION is updated successfully!"
-	echo -e "\033[34m$TOMCATPATH/webapps/$ROOTPATH update successfully\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[34m$TOMCATPATH/webapps/$ROOTPATH update successfully\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
         #重启tomcat
-        echo "Start to start $TOMCATPATH/webapps/$ROOTPATH..." 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+        echo "Start to start $TOMCATPATH/webapps/$ROOTPATH..." 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	sleep 2
 	#开启对应tomcat
 	tctstart
@@ -210,29 +215,68 @@ if [ -z "`ls -A $PACKAGE_PATH/package/update`" ];then
         echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
         exit 4
 else
-        echo -e "\033[34mStart to update tg\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log;
+        echo -e "\033[34mStart to update tg\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;
         sleep 2;
-        \cp -a $PACKAGE_PATH/package/update/* /opt/webserver/tomcat8-zsfusion/webapps/zs 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log;
-        \cp -a $PACKAGE_PATH/package/update/* /opt/webserver/tomcat8-zyjjfusion/webapps/zyjj 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log;
+        \cp -a $PACKAGE_PATH/package/update/* /opt/webserver/tomcat8-zsfusion/webapps/zs 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;
+        \cp -a $PACKAGE_PATH/package/update/* /opt/webserver/tomcat8-zyjjfusion/webapps/zyjj 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;
 fi
 #删除本次更新文件
 mkdir -p $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/
-mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 sleep 3
 #echo "$TOMCATVERSION is updated successfully!"
-echo -e "\033[34mtg update successfully\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+echo -e "\033[34mtg update successfully\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 #重启tomcat
-echo "Start to restart tg" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+echo "Start to restart tg" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 tctconfig -r zs
 tctconfig -r zyjj
+}
+#redis启停配置
+redis_configure(){
+
+REDIS_PATH=`cat $CONF_FILE | grep ^REDIS_PATH | awk -F'=' '{ print $2 }'`
+#echo $REDIS_ACTION
+case $REDIS_ACTION in
+       -st|--startup)
+
+                echo -e "\033[34mStarting redis\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                REDIS_COUNT=`ls $REDIS_PATH/conf | grep conf | wc -l`
+                for I in  `seq 1 $REDIS_COUNT`;do
+                        REDIS_CONF=`ls -l $REDIS_PATH/conf/ | grep conf | head -$I | tail -1 | cut -d ' ' -f9`
+                        $REDIS_PATH/bin/redis-server $REDIS_PATH/conf/$REDIS_CONF
+                        echo -e "\033[35mRedis  $REDIS_CONF is started successfully\033[0m" 2>&1|tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                done
+                echo -e "\033[34mStarting redis successfully\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
+
+        -sh|--shutdown)
+
+                echo -e "\033[36mStart to shut redis\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                ps -ef | grep redis | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh - &> /dev/null
+                echo -e "\033[37mRedis is shutted successfully\033[0m" 2>&1|tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
+
+        -r|--restart)
+
+                echo -e "\033[36mStart to shut redis\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                ps -ef | grep redis | grep -v grep | awk '{print $2}' | sed -e "s/^/kill -9 /g" | sh -
+                echo -e "\033[37mRedis is shutted successfully\033[0m" 2>&1|tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                echo -e "\033[34mStarting redis\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                REDIS_COUNT=`ls $REDIS_PATH/conf | grep conf | wc -l`
+                for I in  `seq 1 $REDIS_COUNT`;do
+                        REDIS_CONF=`ls -l $REDIS_PATH/conf/ | grep conf | head -$I | tail -1 | cut -d ' ' -f9`
+                        $REDIS_PATH/bin/redis-server $REDIS_PATH/conf/$REDIS_CONF
+                         echo -e "\033[35mRedis $REDIS_CONF is started successfully\033[0m" 2>&1|tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                done
+                echo -e "\033[34mRestarting redis successfully\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
+
+esac
 }
 #清理参与进程,日志及备份文件
 clean(){
 	rm -rf $PACKAGE_PATH/package/update/*
-	read -p "Do you want to clean the logs in /usr/local/tctconfig/logs?(y for yes/n for no)" CLOG
+	read -p "Do you want to clean the logs in $TCT_PATH/logs?(y for yes/n for no)" CLOG
 	case $CLOG in
         	y)
-                	rm -rf /usr/local/tctconfig/logs/*
+                	rm -rf $TCT_PATH/logs/*
                 	echo "Clean logs successfully";;
         	n)
                 	echo "Done nothing";;
@@ -252,7 +296,7 @@ clean(){
 #安装部署解压
 #部署tomcat,redis,jdk
 tctinstall(){
-	echo -e "\033[33mStart to install tomcat,the INSTALLPATH is $INSTALLPATH,please waiting\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33mStart to install tomcat,the INSTALLPATH is $INSTALLPATH,please waiting\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#判断目的地址是否存在相同的应用
        	if [ -e $INSTALLPATH/tomcat8 ];then
 		read -p "There is a tomcat8 in $INSTALLPATH,dou you want to remove it?(y/n)" TCTOPTION 
@@ -261,17 +305,17 @@ tctinstall(){
 				#cd $INSTALLPATH
 				mkdir -p $PACKAGE_PATH/package/backup/$INSTALLOPTION/`date +%Y-%m-%d-%H:%M`/
 				mv $INSTALLPATH/tomcat8 $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
-				echo "The old $INSTALLOPTION have been moved to $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-				echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log;;
+				echo "The old $INSTALLOPTION have been moved to $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+				echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
 			n)
-				echo "You choosed no,we have done noting,exiting" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+				echo "You choosed no,we have done noting,exiting" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 
 				exit 1;;
 		esac
 	fi
 	cd $PACKAGE_PATH/package/install/
-	unzip -d $INSTALLPATH `ls $PACKAGE_PATH/package/install/ | grep ^-i tomcat` >> /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-	echo -e "\033[34mTomcat installed successfully!!!\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	unzip -d $INSTALLPATH `ls $PACKAGE_PATH/package/install/ | grep ^-i tomcat` >> $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[34mTomcat installed successfully!!!\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 }
 redisinstall(){
 	#判断目的地址是否存在相同的应用
@@ -282,20 +326,20 @@ redisinstall(){
                                 #cd $INSTALLPATH
                                 mkdir -p $PACKAGE_PATH/package/backup/$INSTALLOPTION/`date +%Y-%m-%d-%H:%M`/
                                 mv $INSTALLPATH/redis $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
-                                echo "The old $INSTALLOPTION have been moved to $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-                                echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log;;
+                                echo "The old $INSTALLOPTION have been moved to $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                                echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
                         n)
-                                echo "You choosed no,we have done noting,exiting" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+                                echo "You choosed no,we have done noting,exiting" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 
                                 exit 2;;
                 esac
         fi
 	cd $PACKAGE_PATH/package/install/
-	echo -e "\033[33mStart to install redis,the INSTALLPATH is $INSTALLPATH,please waiting\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33mStart to install redis,the INSTALLPATH is $INSTALLPATH,please waiting\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
  	#\cp -a ./package/install/redis.zip $INSTALLPATH
-       	unzip -d $INSTALLPATH `ls $PACKAGE_PATH/package/install/ | grep ^-i redis` >> /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+       	unzip -d $INSTALLPATH `ls $PACKAGE_PATH/package/install/ | grep ^-i redis` >> $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
        	#$INSTALLPATH/redis/bin/redis-server  $INSTALLPATH/redis/conf/6379.conf
-	echo -e "\033[34mRedis installed successfully!!!\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[34mRedis installed successfully!!!\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 }
 jdkinstall(){
 	#判断目的地址是否存在相同的应用
@@ -306,18 +350,18 @@ jdkinstall(){
                                 #cd $INSTALLPATH
                                 mkdir -p $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
                                 mv $INSTALLPATH/jdk1.8.0_131 $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/
-                                echo "The old $INSTALLOPTION have been moved to $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-                                echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log;;
+                                echo "The old $INSTALLOPTION have been moved to $PACKAGE_PATH/package/backup/$INSTALLOPTION-`date +%Y-%m-%d-%H:%M`/" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+                                echo "start to install a new $INSTALLOPTION,please waiting..." 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log;;
                         n)
-                                echo "You choosed no,we have done noting,exiting" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+                                echo "You choosed no,we have done noting,exiting" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
                                 exit 3;;
                 esac
         fi
 	cd $PACKAGE_PATH/package/install/
-	echo -e "\033[33mStart to install jdk,the INSTALLPATH is $INSTALLPATH,please waiting\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[33mStart to install jdk,the INSTALLPATH is $INSTALLPATH,please waiting\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 	#\cp -a ./package/install/jdk1.8.0_131.zip $INSTALLPATH
-       	unzip -d $INSTALLPATH `ls $PACKAGE_PATH/package/install/ | grep ^-i jdk` >> /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
-	echo -e "\033[34mJDK installed successfully!!!\033[0m" 2>&1| tee -a /usr/local/tctconfig/logs/tctconfig-`date +%Y-%m-%d`.log
+       	unzip -d $INSTALLPATH `ls $PACKAGE_PATH/package/install/ | grep ^-i jdk` >> $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	echo -e "\033[34mJDK installed successfully!!!\033[0m" 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 }
 		#cat "export JAVA_HOME=$INSTALLPATH/jdk1.8.0_131" >> $INSTALLPATH/tomcat8/bin/catalina.out
         	#cat "export JRE_HOME=$INSTALLPATH/jdk1.8.0_131/jre" >> $INSTALLPATH/tomcat8/bin/catalina.out
@@ -339,7 +383,7 @@ case $INSTALLOPTION in
 		jdkinstall;;
 esac
 }
-CONFIGURE(){
+TOMCAT_CONFIGURE(){
 		
 	case $CONFIGURATION in
 	
@@ -391,8 +435,8 @@ case $CONFIGURATION in
 		clean;;
         i)
                 install;;
-        c)
-                clean;;
+        rd)
+                redis_configure;;
 
 	*)
 		if [ $CONFIG_MODE == PRO ];then
@@ -407,7 +451,7 @@ case $CONFIGURATION in
                         	TOMCATPATH=`cat $CONF_FILE | grep ^$TOMCATVERSION | awk -F':' '{ print $2 }'`;
                         	ROOTPATH=`cat $CONF_FILE | grep ^$TOMCATVERSION | awk -F':' '{ print $3 }'`;
         		fi;
-			CONFIGURE;
+			TOMCAT_CONFIGURE;
 		else
 			if [ $PROGRAM_MODE == single ];then
                 		TOMCATVERSION=`cat $CONF_FILE | grep ^SINGLE_PATH | awk -F':' '{ print $2 }'`;
@@ -418,6 +462,6 @@ case $CONFIGURATION in
 				TOMCATPATH=`cat $CONF_FILE | grep ^$TOMCATVERSION | awk -F':' '{ print $2 }'`;
                			ROOTPATH=`cat $CONF_FILE | grep ^$TOMCATVERSION | awk -F':' '{ print $3 }'`;
 			fi;
-			CONFIGURE;
+			TOMCAT_CONFIGURE;
 		fi;;
 esac
