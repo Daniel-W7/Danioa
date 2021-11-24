@@ -2,6 +2,10 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+# v2.6.2
+
+修复software模式下TCT_PATH路径定义为空的问题
+
 # v2.6.1
 
 添加redis_configure选项，可通过-st命令开启，-sh命令关闭，-r命令重启对应目录的所有redis

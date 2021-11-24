@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.6.1
+#Version:2.6.2
 #Auther：Daniel
-#Date&Time：2021年11月22日
+#Date&Time：2021年11月24日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -13,7 +13,7 @@ set -m
 #获取文件运行的当前目录
 #BINPATH=$(cd "$(dirname "$0")"; pwd)
 
-VERSION=2.6.1
+VERSION=2.6.2
 
 #INSTALL_OPTION配置tctconfig为software模式或者是script模式;
 #如果INSTALL_OPTION配置为script模式，则设置tct.conf的路径为$HOME/tctconfig/conf/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig,日志路径为$HOME/tctconfig/logs
@@ -28,7 +28,7 @@ if [ $INSTALL_OPTION == script ];then
 	PACKAGE_PATH=$HOME/tctconfig
 else
 	CONF_FILE=/etc/tct.conf
-	TCT_PATH=$TCT_PATH
+	TCT_PATH=/usr/local/tctconfig
 	PACKAGE_PATH=$HOME/tctconfig
 fi
 #TCT_PATH=`cat $CONF_FILE | grep ^TCT_PATH | awk -F'=' '{ print $2 }'`
