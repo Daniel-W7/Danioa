@@ -6,6 +6,10 @@ tomcat自动重启配置脚本，之后会试着加上一些系统配置相关�
 
 修复software模式下TCT_PATH路径定义为空的问题
 
+修改tctconfig-xx.run安装脚本配置，可直接通过bash tctconfig-xx.run -sw|--software|-sc|--script进行对应模式的安装
+
+删除instct脚本，完善removtct脚本
+
 # v2.6.1
 
 添加redis_configure选项，可通过-st命令开启，-sh命令关闭，-r命令重启对应目录的所有redis

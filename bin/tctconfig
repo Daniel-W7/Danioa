@@ -19,8 +19,8 @@ VERSION=2.6.2
 #如果INSTALL_OPTION配置为script模式，则设置tct.conf的路径为$HOME/tctconfig/conf/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig,日志路径为$HOME/tctconfig/logs
 #注释掉INSTALL_OPTION或者是配置其他值，则设置tct.conf的路径为/etc/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig，日志路径为/usr/local/logs,
 #根据程序是software模式还是script模式来判断配置文件及日志文件的的路径
-
-INSTALL_OPTION=software
+#默认通过run文件install.sh脚本配置，也可自行配置
+INSTALL_OPTION=
 
 if [ $INSTALL_OPTION == script ];then
 	CONF_FILE=$HOME/tctconfig/conf/tct.conf
