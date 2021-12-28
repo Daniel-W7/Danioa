@@ -211,13 +211,8 @@ update() {
 #清理更新文件
 updateclean(){
 	#备份本次更新文件
-        if [ $MULTI_COUNT -gt 1 ];then
-		mkdir -p $PACKAGE_PATH/package/backup/$MULTI_NAME/`date +%Y-%m-%d-%H:%M`/
-                mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$MULTI_NAME/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
-	else
 		mkdir -p $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/
         	mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
-	fi
 }
 fullupdate(){
 	update
@@ -474,7 +469,7 @@ TOMCAT_CONFIGURE(){
                    	else
 				backup;
 				tctshut;
-				fulllupdate;
+				fullupdate;
 				tctstart;
 			fi;;
         	tu)
