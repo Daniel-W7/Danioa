@@ -2,6 +2,20 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+# v2.6.3
+
+更新多个tomcat同时更新的流程，简化操作
+
+更新update函数，将更新程序和清理更新文件区分开来
+
+添加MULTI_name参数，来实现通过自定义tct.conf文件来实现多个tomcat同时部署，更新，重启，多个tomcat之间用空格隔开
+
+修改tct_run.sh参数，进行整行替换，避免出现定义多个INSTALL_OPTION的情况
+
+添加run_create.sh脚本，可实现自动打包tct_run.sh和程序文件
+
+clean添加清理缓存参数，可通过tctconfig -c log|bak|cache分别清理日志，备份和缓存
+
 # v2.6.2
 
 修复software模式下TCT_PATH路径定义为空的问题

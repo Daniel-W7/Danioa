@@ -1,0 +1,53 @@
+[33mStart to backup /opt/webserver/tomcat8-zsfusion_8811/webapps/zs before test...[0m
+The back file is /opt/webserver/tomcat8-zsfusion_8811/webapps/zs2021-12-24-16:50TB.zip
+[32m/opt/webserver/tomcat8-zsfusion_8811/webapps/zs backup before test successfully.[0m
+[36mStart to shut /opt/webserver/tomcat8-zsfusion_8811/webapps/zs[0m
+[33m/opt/webserver/tomcat8-zsfusion_8811/webapps/zs is shutted successfully[0m
+[32mStarting /opt/webserver/tomcat8-zsfusion_8811/webapps/zs ...[0m
+Using CATALINA_BASE:   /opt/webserver/tomcat8-zsfusion_8811
+Using CATALINA_HOME:   /opt/webserver/tomcat8-zsfusion_8811
+Using CATALINA_TMPDIR: /opt/webserver/tomcat8-zsfusion_8811/temp
+Using JRE_HOME:        /opt/jdk1.8.0_131/jre
+Using CLASSPATH:       /opt/webserver/tomcat8-zsfusion_8811/bin/bootstrap.jar:/opt/webserver/tomcat8-zsfusion_8811/bin/tomcat-juli.jar
+Tomcat started.
+[33mStart to backup /opt/webserver/tomcat8-waibao_8762/webapps/waibao[0m
+The back file is /opt/webserver/tomcat8-waibao_8762/webapps/waibao2021-12-24-17:07.zip
+[32m/opt/webserver/tomcat8-waibao_8762/webapps/waibao backup successfully.[0m
+[36mStart to shut /opt/webserver/tomcat8-waibao_8762/webapps/waibao[0m
+[33m/opt/webserver/tomcat8-waibao_8762/webapps/waibao is shutted successfully[0m
+[34mStart to update /opt/webserver/tomcat8-waibao_8762/webapps/waibao[0m
+[34m/opt/webserver/tomcat8-waibao_8762/webapps/waibao update successfully[0m
+Start to start /opt/webserver/tomcat8-waibao_8762/webapps/waibao...
+[32mStarting /opt/webserver/tomcat8-waibao_8762/webapps/waibao ...[0m
+Using CATALINA_BASE:   /opt/webserver/tomcat8-waibao_8762
+Using CATALINA_HOME:   /opt/webserver/tomcat8-waibao_8762
+Using CATALINA_TMPDIR: /opt/webserver/tomcat8-waibao_8762/temp
+Using JRE_HOME:        /opt/jdk1.8.0_131/jre
+Using CLASSPATH:       /opt/webserver/tomcat8-waibao_8762/bin/bootstrap.jar:/opt/webserver/tomcat8-waibao_8762/bin/tomcat-juli.jar
+Tomcat started.
+[33mStart to backup /opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan[0m
+The back file is /opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan2021-12-24-17:08.zip
+[32m/opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan backup successfully.[0m
+[36mStart to shut /opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan[0m
+[33m/opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan is shutted successfully[0m
+[36mStart to shut /opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan[0m
+[33m/opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan is shutted successfully[0m
+[34mStart to update /opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan[0m
+[34m/opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan update successfully[0m
+Start to start /opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan...
+[32mStarting /opt/webserver/tomcat8-tuoguan_8761/webapps/tuoguan ...[0m
+Using CATALINA_BASE:   /opt/webserver/tomcat8-tuoguan_8761
+Using CATALINA_HOME:   /opt/webserver/tomcat8-tuoguan_8761
+Using CATALINA_TMPDIR: /opt/webserver/tomcat8-tuoguan_8761/temp
+Using JRE_HOME:        /opt/jdk1.8.0_131/jre
+Using CLASSPATH:       /opt/webserver/tomcat8-tuoguan_8761/bin/bootstrap.jar:/opt/webserver/tomcat8-tuoguan_8761/bin/tomcat-juli.jar
+Tomcat started.
+[36mStart to shut /opt/webserver/tomcat8-waibao_8762/webapps/waibao[0m
+[33m/opt/webserver/tomcat8-waibao_8762/webapps/waibao is shutted successfully[0m
+[32mStarting /opt/webserver/tomcat8-waibao_8762/webapps/waibao ...[0m
+Using CATALINA_BASE:   /opt/webserver/tomcat8-waibao_8762
+Using CATALINA_HOME:   /opt/webserver/tomcat8-waibao_8762
+Using CATALINA_TMPDIR: /opt/webserver/tomcat8-waibao_8762/temp
+Using JRE_HOME:        /opt/jdk1.8.0_131/jre
+Using CLASSPATH:       /opt/webserver/tomcat8-waibao_8762/bin/bootstrap.jar:/opt/webserver/tomcat8-waibao_8762/bin/tomcat-juli.jar
+Tomcat started.

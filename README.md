@@ -110,4 +110,7 @@ tct.conf:
 	SINGLE_PATH:
 		后面跟的是单用户模式的应用信息。
 		模式为TOMCATVERSION:TOMCATPATH:ROOTPATH
+	MULTI_name:
+		通过此配置文件可配置多个tomcat，后面的tomcat名称用空格隔开，name为关键字
+		例：MULTI_name:tomcat tomcat2 tomcat3
 
