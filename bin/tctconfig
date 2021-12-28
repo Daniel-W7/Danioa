@@ -103,7 +103,7 @@ case $1 in
 		echo -e "\033[35mThe PACKAGE_PATH is $PACKAGE_PATH\033[0m"
 		exit 0;;
 	-h|--help)
-	echo -e "Usage:tctconf.sh [-option] [TOMCATVERSION] [COUNT]\n  Options:\n  -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate\n  -tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log\n  -i|--install|-c|--clean|-h|--help|-v|--version]\n"
+	echo -e "Usage:tctconf.sh [-option] [TOMCATVERSION] [COUNT] [CLEAN_OPTION]\n  Options:\n  -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate\n  -tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log\n  -i|--install|-c|--clean|-h|--help|-v|--version]\n"
 		exit 0;;
 	*)
 		CONFIG_MODE=COMMON

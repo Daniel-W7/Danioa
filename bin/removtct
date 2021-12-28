@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Start to remove tctconfig"
-INSTALL_OPTION=script
+INSTALL_OPTION=
 case $INSTALL_OPTION in
         software)
                 rm -rf /usr/bin/{tctconfig,removtct}
