@@ -220,10 +220,8 @@ updateclean(){
 	fi
 }
 fullupdate(){
-	tctshut
 	update
 	updateclean
-	tctstart
 }
 #配置同时更新多个tomcat
 #统一管理平台（tg）
@@ -472,15 +470,11 @@ TOMCAT_CONFIGURE(){
         	u)
                 	if [ -z "`ls -A $PACKAGE_PATH/package/update`" ];then
                         	echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
-                        	exit 4
-                   	elif  [ $I -eq $MULTI_COUNT ];then
-                                backup;
-                                fullupdate;
-				exit 0;
-                        else
+                        	exit 4;
+                   	else
 				backup;
 				tctshut;
-				update;
+				fulllupdate;
 				tctstart;
 			fi;;
         	tu)
@@ -488,7 +482,9 @@ TOMCAT_CONFIGURE(){
                                 echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
                         	exit 5;
 			else
-                                fullupdate;
+                                tctshut;
+				fullupdate;
+				tctstart;
                         fi;;
 		l)	
 	                tail -"$COUNT"f $TOMCATPATH/logs/catalina.out;;
