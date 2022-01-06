@@ -166,13 +166,14 @@ tctrestart(){
 }
 #检查TOMCATVERSION是否合法,并获取对应配置文件
 TOMCAT_GET(){
+	#定义MULTI_COUNT初始化值为0，用于判断参数是否为MULTI_NAME
+	MULTI_COUNT=0
 	#判断是否正确输入了参数
 	if [ -z $TOMCATVERSION ];then
 		echo "error,Please choose a system to configure";
 		exit 7;
 	#判断输入的TOMCATVERSION，是否为MULTI_name里的值，如果是的话进行多个更新，不是就正常获取tomcat路径
 	elif [ -n "`cat $CONF_FILE | grep ^MULTI | cut -d : -f 1 | grep $TOMCATVERSION`" ];then
-		MULTI_COUNT=0
 		MULTI_NAME=$TOMCATVERSION
 		MULTI_COUNT=`cat $CONF_FILE | grep ^MULTI | grep $MULTI_NAME | cut -d : -f 2 | awk '{print NF}'`
 		I=1
@@ -472,18 +473,27 @@ TOMCAT_CONFIGURE(){
                 	if [ -z "`ls -A $PACKAGE_PATH/package/update`" ];then
                         echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
                         exit 4;
-                   	elif  [ $I -lt $MULTI_COUNT ];then
-						backup;
-						tctshut;
-					    update;
-						tctstart;
+					fi
+					#根据MULTI_COUNT是否等于0，判断如何进行更新
+					if [ $MULTI_COUNT -ne 0 ];then
+						if	[ "$I -lt $MULTI_COUNT" ];then
+							backup;
+							tctshut;
+					    	update;
+							tctstart;
+						else
+							backup;
+					        tctshut;
+							fullupdate;
+							tctstart;
+						fi;
 					else
-						backup;
+        				backup;
 						tctshut;
 						fullupdate;
 						tctstart;
 					fi;;
-        	tu)
+			tu)
                 	if [ -z "`ls -A $PACKAGE_PATH/package/update`" ];then
                                 echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
                         	exit 5;
