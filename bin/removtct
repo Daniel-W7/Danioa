@@ -3,13 +3,13 @@ echo "Start to remove tctconfig"
 INSTALL_OPTION=
 case $INSTALL_OPTION in
         software)
-                rm -rf /usr/bin/{tctconfig,removtct}
-		echo "/usr/bin/tctconfig,/usr/bin/instct has been removed"
-               	rm -rf /etc/tct.conf
-		echo "/etc/tct.conf has been removed"
+            rm -rf /usr/bin/{tctconfig,removtct}
+			echo "/usr/bin/tctconfig,/usr/bin/instct has been removed"
+            rm -rf /etc/tct.conf
+			echo "/etc/tct.conf has been removed"
 		echo "tctconfig has been removed successfully,please relogin";;
         script)
-                sed -i s@PATH='$PATH':$HOME/tctconfig/bin@@g $HOME/.bashrc
+            sed -i s@PATH='$PATH':$HOME/tctconfig/bin@@g $HOME/.bashrc
 		echo "tctconfig has been removed successfully,please relogin";;
 esac
 
