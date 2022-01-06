@@ -172,6 +172,7 @@ TOMCAT_GET(){
 		exit 7;
 	#判断输入的TOMCATVERSION，是否为MULTI_name里的值，如果是的话进行多个更新，不是就正常获取tomcat路径
 	elif [ -n "`cat $CONF_FILE | grep ^MULTI | cut -d : -f 1 | grep $TOMCATVERSION`" ];then
+		MULTI_COUNT=0
 		MULTI_NAME=$TOMCATVERSION
 		MULTI_COUNT=`cat $CONF_FILE | grep ^MULTI | grep $MULTI_NAME | cut -d : -f 2 | awk '{print NF}'`
 		I=1
@@ -210,9 +211,14 @@ update() {
 }
 #清理更新文件
 updateclean(){
+	if [ $MULTI_COUNT -ne 0 ];then
+		if [ $I -eq $MULTI_COUNT ];then
+			TOMCATVERSION=$MULTI_NAME;
+		fi;
+	fi
 	#备份本次更新文件
-		mkdir -p $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/
-        	mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
+	mkdir -p $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/
+    mv $PACKAGE_PATH/package/update/* $PACKAGE_PATH/package/backup/$TOMCATVERSION/`date +%Y-%m-%d-%H:%M`/ 2>&1| tee -a $TCT_PATH/logs/tctconfig-`date +%Y-%m-%d`.log
 }
 fullupdate(){
 	update
