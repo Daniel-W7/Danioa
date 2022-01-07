@@ -3,7 +3,7 @@
 #Name:tctconfig
 #Version:2.6.3
 #Auther：Daniel
-#Date&Time：2022年1月6日
+#Date&Time：2022年1月7日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -471,37 +471,50 @@ TOMCAT_CONFIGURE(){
                 	tctrestart;;
         	u)
                 	if [ -z "`ls -A $PACKAGE_PATH/package/update`" ];then
-                        echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
-                        exit 4;
-					fi
-					#根据MULTI_COUNT是否等于0，判断如何进行更新
-					if [ $MULTI_COUNT -ne 0 ];then
-						if	[ "$I -lt $MULTI_COUNT" ];then
-							backup;
-							tctshut;
-					    	update;
-							tctstart;
-						else
-							backup;
-					        tctshut;
-							fullupdate;
-							tctstart;
-						fi;
-					else
-        				backup;
-						tctshut;
-						fullupdate;
-						tctstart;
-					fi;;
-			tu)
+                        	echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
+                        	exit 4;
+			fi
+			#根据MULTI_COUNT是否等于0，判断如何进行更新
+			if [ $MULTI_COUNT -ne 0 ];then
+				if	[ $I -lt $MULTI_COUNT ];then
+					backup;
+					tctshut;
+			    		update;
+					tctstart;
+				else
+					backup;
+			        	tctshut;
+					fullupdate;
+					tctstart;
+				fi;
+			else
+        			backup;
+				tctshut;
+				fullupdate;
+				tctstart;
+			fi;;
+		tu)
                 	if [ -z "`ls -A $PACKAGE_PATH/package/update`" ];then
                                 echo -e "\033[31merror\033[0m,Update files don't exist,Please put it in $PACKAGE_PATH/package/update/";
                         	exit 5;
-			else
+			fi      
+                        #根据MULTI_COUNT是否等于0，判断如何进行更新
+                        if [ $MULTI_COUNT -ne 0 ];then
+                                if      [ $I -lt $MULTI_COUNT ];then
+                                        tctshut;
+                                        update; 
+                                        tctstart;
+                                else    
+                                        tctshut;
+                                        fullupdate;
+                                        tctstart;
+                                fi;     
+                        else    
                                 tctshut;
-				fullupdate;
-				tctstart;
-                        fi;;
+                                fullupdate;
+                                tctstart;
+                        fi;;    
+
 		l)	
 	                tail -"$COUNT"f $TOMCATPATH/logs/catalina.out;;
         	sh)
