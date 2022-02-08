@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.6.3
+#Version:2.6.4
 #Auther：Daniel
-#Date&Time：2022年1月7日
+#Date&Time：2022年2月8日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -13,7 +13,7 @@ set -m
 #获取文件运行的当前目录
 #BINPATH=$(cd "$(dirname "$0")"; pwd)
 
-VERSION=2.6.3
+VERSION=2.6.4
 
 #INSTALL_OPTION=software配置tctconfig为software模式或者是script模式;
 #如果INSTALL_OPTION=software配置为script模式，则设置tct.conf的路径为$HOME/tctconfig/conf/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig,日志路径为$HOME/tctconfig/logs
@@ -59,11 +59,11 @@ case $1 in
 		CONFIGURATION=tg
 		CONFIG_MODE=COMMON;;
 	-gt|--gtupdate)
-        CONFIGURATION=gt
-        CONFIG_MODE=COMMON;;
+        	CONFIGURATION=gt
+        	CONFIG_MODE=COMMON;;
 	-qxbs|--qxbsupdate)
-        CONFIGURATION=qxbs
-        CONFIG_MODE=COMMON;;
+        	CONFIGURATION=qxbs
+        	CONFIG_MODE=COMMON;;
 	-sh|--shutdown)
 		CONFIGURATION=sh
 		CONFIG_MODE=PRO;;
@@ -93,6 +93,14 @@ case $1 in
 		if [ $INSTALLOPTION -n ];then
 			INSTALLOPTION=full;
 		fi;;
+	-e|--edit)
+		CONFIGURATION=e
+		CONFIG_MODE=PRO
+		if [ $PROGRAM_MODE == multi ];then
+                        EDIT_FILE=$3
+                else
+                        EDIT_FILE=$2
+                fi;;
 	-c|--clean)
 		CONFIGURATION=c
 		CLEAN_OPTION=$2;;
@@ -103,7 +111,7 @@ case $1 in
 		echo -e "\033[35mThe PACKAGE_PATH is $PACKAGE_PATH\033[0m"
 		exit 0;;
 	-h|--help)
-	echo -e "Usage:tctconf.sh [-option] [TOMCATVERSION] [COUNT] [CLEAN_OPTION]\n  Options:\n  -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate\n  -tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log\n  -i|--install|-c|--clean|-h|--help|-v|--version]\n"
+	echo -e "Usage:tctconf.sh [-option] [TOMCATVERSION] [COUNT] [CLEAN_OPTION] [filename]\n  Options:\n  -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-e|--edit\n  -tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log\n  -i|--install|-c|--clean|-h|--help|-v|--version]\n"
 		exit 0;;
 	*)
 		CONFIG_MODE=COMMON
@@ -273,6 +281,20 @@ qxbsupdate(){
 			tctshut
 			fullupdate
 			tctstart
+}
+#classes里面的配置文件修改
+edit_file(){
+	CLASSES_PATH=$TOMCATPATH/webapps/$ROOTPATH/WEB-INF/classes
+	case $EDIT_FILE in
+		com)
+		vim $CLASSES_PATH/company.properties;;
+		con)
+		vim $CLASSES_PATH/config.properties;;
+		spr)
+		vim $CLASSES_PATH/spring-task.xml;;
+		*)
+		echo "please input com|con|spr";;
+	esac
 }
 #redis启停配置
 redis_configure(){
@@ -521,6 +543,8 @@ TOMCAT_CONFIGURE(){
 			tctshut;;
 		st)
 			tctstart;;
+		e)
+			edit_file;;
 		*)
 			echo "Usage:tctconf.sh [-b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-c|--clean|-h|--help] [TOMCATVERSION]"
                 exit 6;;		
