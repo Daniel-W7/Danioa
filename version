@@ -2,6 +2,13 @@
 
 tomcat自动重启配置脚本，之后会试着加上一些系统配置相关的内容
 
+
+# v2.6.5
+
+配置single mode下的MULTI_COUNT的值，处理single mode下面的报错问题
+
+更新-h的显示内容
+
 # v2.6.4
 
 添加-e选项用于修改WEB-INF/classes下的配置文件

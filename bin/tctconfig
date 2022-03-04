@@ -1,9 +1,8 @@
 #!/bin/bash
 #
 #Name:tctconfig
-#Version:2.6.4
 #Auther：Daniel
-#Date&Time：2022年2月8日
+#Date&Time：2022年3月4日
 #Discription：实现通过脚本自动备份，重启，更新tomcat系统
 #定义Tomcat的安装目录，需要根据自己的部署位置调整
 #配置多线程处理，避免因为脚本的退出导致tomcat自动退出的情况
@@ -13,7 +12,7 @@ set -m
 #获取文件运行的当前目录
 #BINPATH=$(cd "$(dirname "$0")"; pwd)
 
-VERSION=2.6.4
+VERSION=2.6.5
 
 #INSTALL_OPTION=software配置tctconfig为software模式或者是script模式;
 #如果INSTALL_OPTION=software配置为script模式，则设置tct.conf的路径为$HOME/tctconfig/conf/tct.conf,更新补丁及备份补丁路径为$HOME/tctconfig,日志路径为$HOME/tctconfig/logs
@@ -111,7 +110,11 @@ case $1 in
 		echo -e "\033[35mThe PACKAGE_PATH is $PACKAGE_PATH\033[0m"
 		exit 0;;
 	-h|--help)
-	echo -e "Usage:tctconf.sh [-option] [TOMCATVERSION] [COUNT] [CLEAN_OPTION] [filename]\n  Options:\n  -b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-e|--edit\n  -tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log\n  -i|--install|-c|--clean|-h|--help|-v|--version]\n"
+echo -e "Usage:tctconfig [-option] [TOMCATVERSION] [COUNT] [CLEAN_OPTION] [filename]
+Options:-b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|
+	-e|--edit|-tg|--tgupdate|-sh|--shutdown|-st|--startup|-l|--log
+	-i|--install|-c|--clean|-h|--help|-v|--version]"
+	
 		exit 0;;
 	*)
 		CONFIG_MODE=COMMON
@@ -546,8 +549,7 @@ TOMCAT_CONFIGURE(){
 		e)
 			edit_file;;
 		*)
-			echo "Usage:tctconf.sh [-b|--backup|-tb|--testbackup|-r|--restart|-u|--update|-tu|--testupdate|-sh|--shutdown|-st|--startup|-l|--log|-i|--install|-c|--clean|-h|--help] [TOMCATVERSION]"
-                exit 6;;		
+			tctconfig -h;;		
 	esac
 	mv $TCT_PATH/tee $TCT_PATH/logs/ &> /dev/null
         mv $TOMCATPATH/webapps/tee $TCT_PATH/logs/ &> /dev/null
@@ -580,6 +582,7 @@ case $CONFIGURATION in
 	*)
 		if [ $CONFIG_MODE == PRO ];then
 	 		if [ $PROGRAM_MODE == single ];then
+			 			MULTI_COUNT=0;
                 		TOMCATVERSION=`cat $CONF_FILE | grep ^SINGLE_PATH | awk -F':' '{ print $2 }'`;
                 		TOMCATPATH=`cat $CONF_FILE | grep ^SINGLE_PATH | awk -F':' '{ print $3 }'`;
                 		ROOTPATH=`cat $CONF_FILE | grep ^SINGLE_PATH | awk -F':' '{ print $4 }'`;
@@ -591,6 +594,7 @@ case $CONFIGURATION in
 			TOMCAT_CONFIGURE;
 		else
 			if [ $PROGRAM_MODE == single ];then
+						MULTI_COUNT=0;
                 		TOMCATVERSION=`cat $CONF_FILE | grep ^SINGLE_PATH | awk -F':' '{ print $2 }'`;
                 		TOMCATPATH=`cat $CONF_FILE | grep ^SINGLE_PATH | awk -F':' '{ print $3 }'`;
                 		ROOTPATH=`cat $CONF_FILE | grep ^SINGLE_PATH | awk -F':' '{ print $4 }'`;
